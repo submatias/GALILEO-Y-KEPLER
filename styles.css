@@ -1,0 +1,176 @@
+:root{
+  --bg: #0f1221;
+  --bg-soft: #151835;
+  --card: #191d3f;
+  --ink: #7c89ff;
+  --ink-2: #b388ff;
+  --text: #e8e9fb;
+  --muted: #aab0d6;
+  --ok: #5be4a8;
+  --warn: #ffd166;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --radius: 18px;
+}
+
+*{box-sizing: border-box}
+
+html,body{
+  height:100%;
+  margin:0;
+  background: radial-gradient(1200px 600px at 10% -10%, #20244f55, transparent),
+              radial-gradient(1000px 500px at 100% 10%, #382a6a55, transparent),
+              var(--bg);
+  color:var(--text);
+  font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.site-header{
+  position: sticky; top:0; z-index: 50;
+  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(10,12,26,.8), rgba(10,12,26,.45));
+  border-bottom: 1px solid #ffffff18;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: .7rem 1rem;
+}
+
+.logo{display:flex; gap:.75rem; align-items:center}
+.logo-badge{
+  display:grid; place-items:center;
+  width:42px;height:42px;border-radius:12px;
+  background: linear-gradient(135deg, var(--ink), var(--ink-2));
+  color:#0b0e1c; font-weight:900;
+  box-shadow: var(--shadow);
+}
+.logo-text small{display:block; color:var(--muted); margin-top:-2px}
+
+.tabs{position:relative; display:flex; gap:.35rem; background:#ffffff0d; padding:.35rem; border-radius:999px; align-items:center}
+.tab{
+  appearance:none; border:0; background:transparent; color:var(--text);
+  padding:.5rem .9rem; border-radius:999px; cursor:pointer; font-weight:600;
+  position:relative;
+}
+.tab:hover{color:white}
+.tab.active{color:#0b0e1c}
+.tab-ink{
+  position:absolute; height:32px; width:100px; top:50%; transform:translateY(-50%);
+  background:linear-gradient(135deg, var(--ink), var(--ink-2));
+  border-radius:999px; z-index:-1; transition: all .35s cubic-bezier(.2,.7,.2,1);
+  box-shadow: var(--shadow);
+}
+
+.app{max-width:1200px; margin: 1.2rem auto; padding: 0 1rem}
+.view{display:none; animation: viewIn .5s ease forwards}
+.view.active{display:block}
+@keyframes viewIn{from{opacity:0; transform: translateY(10px)} to{opacity:1; transform:none}}
+
+.hero{margin: 1rem 0 1.5rem}
+.title{font-size: clamp(1.8rem, 2.5vw + 1.2rem, 3rem); margin: 0 0 .4rem}
+.subtitle{color:var(--muted); margin:0}
+.slide-up{animation: slideUp .65s ease both}
+.fade-in{animation: fadeIn .9s .1s ease both}
+@keyframes slideUp{from{opacity:0; transform: translateY(12px)} to{opacity:1; transform:none}}
+@keyframes fadeIn{from{opacity:0} to{opacity:1}}
+
+.grid-portraits{
+  display:grid; gap:1.2rem; grid-template-columns: repeat(2, minmax(250px, 1fr));
+  margin-top:1.2rem;
+}
+.card{
+  background: linear-gradient(180deg, #ffffff06, #00000012);
+  border:1px solid #ffffff14; border-radius: var(--radius);
+  box-shadow: var(--shadow); padding:1rem;
+}
+
+.portrait .img-wrap{
+  position:relative; border-radius: calc(var(--radius) - 6px); overflow:hidden;
+  aspect-ratio: 16/9; background: #1b1f41;
+}
+.portrait img{
+  width:100%; height:100%; object-fit: cover; display:block;
+  transform: scale(1.02); transition: transform .5s ease;
+  filter: saturate(1.05) contrast(1.02) brightness(.98);
+}
+.portrait img.fallback{
+  background: linear-gradient(135deg, #202656, #1b1f41);
+  content: "";
+}
+.portrait .badge{
+  position:absolute; left:12px; bottom:12px;
+  background:#0b0e1cdd; border:1px solid #ffffff1a; color:#fff;
+  padding:.35rem .6rem; border-radius:999px; font-weight:700;
+  backdrop-filter: blur(6px);
+}
+.portrait:hover img{ transform: scale(1.06) }
+.hint{opacity:.8; color:var(--muted); margin:.7rem 0 0}
+
+.view-header h2{margin:.2rem 0}
+.view-header p{margin:0; color:var(--muted)}
+
+.cards.formulas{display:grid; gap:1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top:1rem}
+.formula-list{margin:.2rem 0 .2rem 1rem}
+.formula-list code{background:#00000030; border:1px solid #ffffff18; padding:.12rem .35rem; border-radius:8px}
+.tip{border:1px dashed #ffffff2a; background: linear-gradient(180deg, #ffffff08, #00000010)}
+.use{color:var(--ok); margin:.6rem 0 0}
+
+.lab-grid{display:grid; gap:1rem; grid-template-columns: 1fr; margin-top:1rem}
+@media (min-width: 980px){
+  .lab-grid{grid-template-columns: 1fr 1fr}
+}
+.controls{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:.7rem; margin-bottom:.7rem
+}
+.controls label{display:flex; flex-direction:column; gap:.25rem; font-weight:600}
+.controls input, .controls input[type="range"]{
+  background:#0b0e1c; border:1px solid #ffffff22; color:#fff; padding:.5rem .6rem; border-radius:10px;
+}
+.controls input[type="range"]{height: 36px}
+.controls output{display:inline-block; min-width:2.8ch; text-align:right; color:var(--muted); font-variant-numeric: tabular-nums}
+
+.btns{display:flex; gap:.5rem; align-items:center}
+.btn{
+  border:0; cursor:pointer; padding:.55rem .9rem; border-radius:12px; font-weight:700;
+  background:#ffffff15; color:#fff; transition: transform .06s ease, background .2s;
+}
+.btn:hover{background:#ffffff25}
+.btn:active{transform: translateY(1px)}
+.btn.primary{background: linear-gradient(135deg, var(--ink), var(--ink-2)); color:#0b0e1c}
+.btn.soft{background:#ffffff12}
+
+#canvas-galileo{
+  width:100%; height:auto; display:block; background: radial-gradient(300px 160px at 30% 20%, #ffffff10, transparent), #0b0e1c;
+  border:1px solid #ffffff18; border-radius:12px;
+}
+
+.readouts{
+  display:flex; flex-wrap:wrap; gap:.8rem; margin-top:.6rem; color:var(--muted)
+}
+.k-readouts{justify-content:space-between}
+
+.orbit-wrap{display:grid; place-items:center; margin-top:.5rem}
+#orbit{max-width:100%}
+.path{fill:none; stroke:#ffffff3a; stroke-width:2}
+.sun{fill:#ffd166}
+.planet{fill:#7c89ff}
+
+.bio-modal::backdrop{background:rgba(0,0,0,.6)}
+.modal-card{
+  width:min(800px, 92vw); border:1px solid #ffffff26; border-radius:16px; padding:0; overflow:hidden; background: var(--bg-soft);
+  box-shadow: var(--shadow);
+}
+.modal-head, .modal-foot{padding:.8rem 1rem; display:flex; align-items:center; justify-content:space-between; background:#ffffff08}
+.modal-head h3{margin:0}
+.modal-body{padding:1rem; color:#eaeaff}
+.icon-btn{background:transparent; border:0; color:#fff; font-size:1.1rem; cursor:pointer}
+
+.site-footer{
+  opacity:.85; color:var(--muted); text-align:center; padding:1.2rem 1rem;
+}
+
+.reveal{opacity:0; transform: translateY(8px); transition: all .6s ease}
+.reveal.in{opacity:1; transform:none}
+
+/* Responsive tweaks */
+@media (max-width: 700px){
+  .controls{grid-template-columns: 1fr}
+  .grid-portraits{grid-template-columns: 1fr}
+}

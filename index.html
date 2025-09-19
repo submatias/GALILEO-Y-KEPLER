@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galileo & Kepler — Biografías, Fórmulas y Laboratorio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-badge">G&K</span>
+      <div class="logo-text">
+        <strong>Galileo & Kepler</strong>
+        <small>Ciencia en acción</small>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Secciones del sitio">
+      <button class="tab active" data-route="inicio" aria-selected="true">Inicio</button>
+      <button class="tab" data-route="formulas" aria-selected="false">Fórmulas</button>
+      <button class="tab" data-route="laboratorio" aria-selected="false">Laboratorio</button>
+      <div class="tab-ink"></div>
+    </nav>
+  </header>
+
+  <main id="app" class="app">
+    <!-- INICIO -->
+    <section id="view-inicio" class="view active" aria-labelledby="tab-inicio">
+      <div class="hero">
+        <h1 class="title slide-up">Grandes mentes, grandes ideas</h1>
+        <p class="subtitle fade-in">
+          Explorá las vidas y aportes de <b>Galileo Galilei</b> y <b>Johannes Kepler</b>.
+          Hacé click en sus retratos para conocer más.
+        </p>
+      </div>
+
+      <div class="grid-portraits">
+        <article class="card portrait" data-person="galileo" tabindex="0" role="button" aria-pressed="false">
+          <div class="img-wrap">
+            <img src="https://s3.amazonaws.com/rtvc-assets-senalcolombia.gov.co/s3fs-public/field/image/21-agosto-telescopio-historia-presenta-mundo-galileo-galilei-portada.jpg" alt="Retrato de Galileo Galilei" onerror="this.classList.add('fallback')" />
+            <div class="badge">Galileo Galilei</div>
+          </div>
+          <p class="hint">Click para ver biografía</p>
+        </article>
+
+        <article class="card portrait" data-person="kepler" tabindex="0" role="button" aria-pressed="false">
+          <div class="img-wrap">
+            <img src="https://i.ytimg.com/vi/to10LqfcQYI/maxresdefault.jpg" alt="Retrato de Johannes Kepler" onerror="this.classList.add('fallback')" />
+            <div class="badge">Johannes Kepler</div>
+          </div>
+          <p class="hint">Click para ver biografía</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- FÓRMULAS -->
+    <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
+      <header class="view-header">
+        <h2>Fórmulas y aplicaciones</h2>
+        <p>Resumen de ecuaciones clave y para qué se usan.</p>
+      </header>
+
+      <div class="cards formulas">
+        <article class="card reveal">
+          <h3>Galileo — Cinemática</h3>
+          <ul class="formula-list">
+            <li>
+              <div><code>v = v₀ + a·t</code></div>
+              <small>Evolución de la velocidad con aceleración constante (caída libre: <code>a ≈ g</code>).</small>
+            </li>
+            <li>
+              <div><code>s = s₀ + v₀·t + ½·a·t²</code></div>
+              <small>Posición en MRUA; predice alturas, tiempos de vuelo, etc.</small>
+            </li>
+            <li>
+              <div><code>v² = v₀² + 2·a·(s − s₀)</code></div>
+              <small>Relación entre velocidades y desplazamiento sin tiempo.</small>
+            </li>
+          </ul>
+          <p class="use">Uso típico: analizar caídas, lanzamientos verticales y planos inclinados.</p>
+        </article>
+
+        <article class="card reveal">
+          <h3>Kepler — Leyes del movimiento planetario</h3>
+          <ol class="formula-list">
+            <li>
+              <div><strong>1ª Ley (Órbitas elípticas)</strong>: los planetas se mueven en elipses con el Sol en un foco.</div>
+            </li>
+            <li>
+              <div><strong>2ª Ley (Áreas iguales)</strong>: el radio vector barre áreas iguales en tiempos iguales.</div>
+              <small>Implica que el planeta va más rápido cerca del perihelio.</small>
+            </li>
+            <li>
+              <div><strong>3ª Ley (Períodos)</strong>:
+                <code>T² ∝ a³</code> &nbsp; (para un mismo sistema: <code>T² = k·a³</code>).
+              </div>
+              <small>Relaciona el período orbital <code>T</code> con el semieje mayor <code>a</code>.</small>
+            </li>
+          </ol>
+          <p class="use">Uso típico: estimar períodos orbitales y comparar órbitas en sistemas planetarios.</p>
+        </article>
+
+        <article class="card tip reveal">
+          <h3>Tip rápido</h3>
+          <p>En unidades astronómicas (UA) y años alrededor del Sol, <code>k ≈ 1</code>, por lo que <code>T² ≈ a³</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- LABORATORIO -->
+    <section id="view-laboratorio" class="view" aria-labelledby="tab-laboratorio">
+      <header class="view-header">
+        <h2>Laboratorio interactivo</h2>
+        <p>Probá las ideas con simulaciones y calculadoras.</p>
+      </header>
+
+      <div class="lab-grid">
+        <!-- Galileo Lab -->
+        <section class="card lab reveal">
+          <h3>Galileo: Tiro vertical / Caída libre</h3>
+          <form id="form-galileo" class="controls">
+            <label>
+              Gravedad <small>(m/s²)</small>
+              <input type="number" id="g" step="0.1" value="9.8" />
+            </label>
+            <label>
+              Velocidad inicial <small>v₀ (m/s)</small>
+              <input type="number" id="v0" step="0.1" value="12" />
+            </label>
+            <label>
+              Altura inicial <small>h₀ (m)</small>
+              <input type="number" id="h0" step="0.1" value="1.5" />
+            </label>
+            <div class="btns">
+              <button type="button" id="btn-simular" class="btn primary">Simular</button>
+              <button type="button" id="btn-reiniciar" class="btn soft">Reiniciar</button>
+            </div>
+          </form>
+          <canvas id="canvas-galileo" width="640" height="360" aria-label="Simulación de movimiento"></canvas>
+          <div class="readouts">
+            <div><strong>Tiempo de vuelo:</strong> <span id="tvuelo">—</span> s</div>
+            <div><strong>Altura máxima:</strong> <span id="hmax">—</span> m</div>
+            <div><strong>Vel. impacto:</strong> <span id="vimpacto">—</span> m/s</div>
+          </div>
+          <p class="note"></p>
+        </section>
+
+        <!-- Kepler Lab -->
+        <section class="card lab reveal">
+          <h3>Kepler: 3ª ley (T² = k·a³)</h3>
+          <form class="controls" id="form-kepler">
+            <label>
+              Semieje mayor <small>a (UA)</small>
+              <input type="range" id="a" min="0.2" max="10" step="0.1" value="1" />
+              <output id="aOut">1.0</output>
+            </label>
+            <label>
+              Constante <small>k (≈1 para Sol)</small>
+              <input type="number" id="k" step="0.01" value="1.00" />
+            </label>
+          </form>
+          <div class="readouts k-readouts">
+            <div><strong>Período:</strong> <span id="T">1.00</span> años</div>
+            <div><strong>T²:</strong> <span id="T2">1.00</span></div>
+            <div><strong>a³:</strong> <span id="a3">1.00</span></div>
+          </div>
+
+          <div class="orbit-wrap" aria-label="Animación de órbita">
+            <svg id="orbit" viewBox="0 0 300 300" width="300" height="300" role="img" aria-label="Órbita elíptica">
+              <defs>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <ellipse id="ellipse" cx="150" cy="150" rx="110" ry="80" class="path"></ellipse>
+              <circle cx="150" cy="150" r="8" class="sun" filter="url(#glow)"></circle>
+              <circle id="planet" r="6" class="planet"></circle>
+            </svg>
+            <p class="note">La velocidad orbital se ajusta para mantener el período estimado.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal biografías -->
+  <dialog id="bio-modal" aria-labelledby="bio-title" class="bio-modal">
+    <form method="dialog" class="modal-card">
+      <header class="modal-head">
+        <h3 id="bio-title">Título</h3>
+        <button class="icon-btn" value="cancel" aria-label="Cerrar">✕</button>
+      </header>
+      <article id="bio-content" class="modal-body"></article>
+      <footer class="modal-foot">
+        <button class="btn soft" value="cancel">Cerrar</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <footer class="site-footer">
+   
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
