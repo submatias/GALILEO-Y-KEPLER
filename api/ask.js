@@ -1,32 +1,42 @@
 // api/ask.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-export default async function handler(request, response) {
-  // Solo permite peticiones POST por seguridad
-  if (request.method !== 'POST') {
-    return response.status(405).json({ message: 'Method Not Allowed' });
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // Verifica que se haya enviado una pregunta (prompt) en el cuerpo de la petición
-  const { prompt } = request.body;
+  const { prompt } = req.body;
   if (!prompt) {
-    return response.status(400).json({ message: 'Missing prompt' });
+    return res.status(400).json({ message: 'Missing prompt' });
   }
 
   try {
-    // Inicializa el cliente de la API usando la variable de entorno segura
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }],
+        }),
+      }
+    );
 
-    // Envía la pregunta al modelo de Gemini
-    const result = await model.generateContent(prompt);
-    const apiResponse = await result.response;
-    const text = apiResponse.text();
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Error:', errorData);
+      throw new Error('API request failed');
+    }
 
-    // Devuelve la respuesta a tu sitio web como JSON
-    response.status(200).json({ answer: text });
+    const data = await response.json();
+    const text = data.candidates[0].content.parts[0].text;
+    res.status(200).json({ answer: text });
   } catch (error) {
-    console.error("Error with Gemini API:", error);
-    response.status(500).json({ message: 'Internal Server Error' });
+    console.error('Error processing request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 }
