@@ -460,7 +460,7 @@ btnAiAsk.addEventListener('click', async () => {
   try {
     // 3. Envía la pregunta a tu función serverless
     // Reemplaza esta URL con la URL de tu función serverless
-    const serverlessUrl = 'https://TU-URL-DE-SERVERLESS.com/api/ask';
+    const serverlessUrl = 'https://galileo-y-kepler.vercel.app/';
 
     const response = await fetch(serverlessUrl, {
       method: 'POST',
@@ -486,3 +486,4 @@ btnAiAsk.addEventListener('click', async () => {
 });
 
 // --- FIN DEL CÓDIGO NUEVO ---
+
