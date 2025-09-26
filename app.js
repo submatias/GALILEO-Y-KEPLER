@@ -438,6 +438,53 @@ function initExam(){
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
 
 // -------- Integración de IA con Gemini --------
+// --- CÓDIGO PARA IA DE GEMINI ---
+
+// 1. Obtén las referencias a los elementos HTML al DOM para que el código funcione
+const aiQuestionInput = document.getElementById('ai-question');
+const aiAnswerDiv = document.getElementById('ai-answer');
+const btnAiAsk = document.getElementById('btn-ai-ask');
+
+// 2. Escucha el clic en el botón
+if (btnAiAsk) {
+  btnAiAsk.addEventListener('click', async () => {
+    const question = aiQuestionInput.value.trim();
+    if (!question) {
+      aiAnswerDiv.textContent = 'Por favor, escribe una pregunta.';
+      return;
+    }
+
+    aiAnswerDiv.textContent = 'Generando respuesta... ⏳';
+    btnAiAsk.disabled = true;
+
+    try {
+      // 3. Envía la pregunta a tu función serverless
+      // Esta URL se genera automáticamente para ser compatible con Vercel
+      const serverlessUrl = window.location.origin + '/api/ask';
+
+      const response = await fetch(serverlessUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: question }),
+      });
+
+      if (!response.ok) {
+        throw new Error('La IA no pudo responder. Inténtalo de nuevo más tarde.');
+      }
+
+      const data = await response.json();
+      aiAnswerDiv.textContent = data.answer || 'No se pudo obtener una respuesta.';
+
+    } catch (error) {
+      console.error('Error al comunicarse con la IA:', error);
+      aiAnswerDiv.textContent = 'Hubo un error al procesar tu pregunta. Por favor, revisa la consola para más detalles.';
+    } finally {
+      btnAiAsk.disabled = false;
+    }
+  });
+}
 
 // --- NUEVO CÓDIGO ---
 
@@ -486,6 +533,7 @@ btnAiAsk.addEventListener('click', async () => {
 });
 
 // --- FIN DEL CÓDIGO NUEVO ---
+
 
 
 
