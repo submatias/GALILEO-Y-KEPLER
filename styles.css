@@ -174,3 +174,8 @@ html,body{
   .controls{grid-template-columns: 1fr}
   .grid-portraits{grid-template-columns: 1fr}
 }
+.exam-container{margin-top:1rem}
+.exam-form{display:grid; gap:1rem}
+.question{padding:1rem; border:1px solid #ffffff20; border-radius:12px; background:#ffffff05}
+.question h4{margin:0 0 .5rem}
+.exam-result{margin-top:1rem; font-size:1.2rem; font-weight:700; color:var(--ok)}
