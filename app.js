@@ -442,7 +442,6 @@ document.querySelector('[data-route="examen"]').addEventListener('click', initEx
 // --- NUEVO CÓDIGO ---
 
 // 1. Añade los elementos HTML al DOM para que el código funcione
-const aiQuestionInput = document.getElementById('ai-question');
 const aiAnswerDiv = document.getElementById('ai-answer');
 const btnAiAsk = document.getElementById('btn-ai-ask');
 
@@ -486,6 +485,7 @@ btnAiAsk.addEventListener('click', async () => {
 });
 
 // --- FIN DEL CÓDIGO NUEVO ---
+
 
 
 
