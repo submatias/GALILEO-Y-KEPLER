@@ -20,6 +20,7 @@
       <button class="tab active" data-route="inicio" aria-selected="true">Inicio</button>
       <button class="tab" data-route="formulas" aria-selected="false">Fórmulas</button>
       <button class="tab" data-route="laboratorio" aria-selected="false">Laboratorio</button>
+        <button class="tab" data-route="examen" aria-selected="false">Examen</button>
       <div class="tab-ink"></div>
     </nav>
   </header>
@@ -53,6 +54,19 @@
         </article>
       </div>
     </section>
+    <section class="card reveal" style="margin-top: 1rem;">
+  <h3>Pregúntale a nuestra IA</h3>
+  <div class="controls" style="grid-template-columns: 1fr; gap: 0.5rem;">
+    <label>Tu pregunta:
+      <textarea id="ai-question" rows="3" placeholder="Ej: ¿Qué son las leyes de Kepler?"></textarea>
+    </label>
+    <button type="button" id="btn-ai-ask" class="btn primary">Enviar pregunta</button>
+  </div>
+  <div class="readouts" style="flex-direction: column;">
+    <h4>Respuesta de la IA:</h4>
+    <div id="ai-answer" style="white-space: pre-wrap; color: var(--text);">Esperando pregunta...</div>
+  </div>
+</section>
 
     <!-- FÓRMULAS -->
     <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
@@ -184,8 +198,94 @@
             <p class="note">La velocidad orbital se ajusta para mantener el período estimado.</p>
           </div>
         </section>
+       <!-- Caída libre de dos masas -->
+<section class="card lab reveal">
+  <h3>Caída Libre (distintas masas)</h3>
+  <div class="controls">
+    <label>Masa objeto 1 (kg)
+      <input type="number" id="masa1" value="5" step="0.1">
+    </label>
+    <label>Masa objeto 2 (kg)
+      <input type="number" id="masa2" value="50" step="0.1">
+    </label>
+  </div>
+  <div class="btns">
+    <button type="button" id="btn-caida" class="btn primary">Soltar</button>
+    <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-caida" width="320" height="240"></canvas>
+  <p class="note">Ambos caen igual, independientemente de la masa.</p>
+</section>
+
+<!-- Resistencia del aire -->
+<section class="card lab reveal">
+  <h3>Caída con resistencia del aire</h3>
+  <div class="controls">
+    <label>Masa bola (kg)
+      <input type="number" id="masaBola" value="5" step="0.1">
+    </label>
+    <label>Masa pluma (kg)
+      <input type="number" id="masaPluma" value="0.1" step="0.01">
+    </label>
+  </div>
+  <label><input type="checkbox" id="aireToggle"> Activar resistencia</label>
+  <div class="btns">
+    <button type="button" id="btn-aire" class="btn primary">Soltar</button>
+    <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-aire" width="320" height="240"></canvas>
+  <p class="note">Con aire: la pluma cae más lento. Sin aire: caen igual.</p>
+</section>
+
+<!-- Plano inclinado -->
+<section class="card lab reveal">
+  <h3>Plano Inclinado</h3>
+  <label>Ángulo:
+    <input type="range" id="angulo" min="5" max="60" value="30">
+    <output id="anguloOut">30°</output>
+  </label>
+  <div class="btns">
+    <button type="button" id="btn-plano" class="btn primary">Iniciar</button>
+    <button type="button" id="btn-plano-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-plano" width="320" height="240"></canvas>
+  <p class="note">La aceleración depende del ángulo del plano.</p>
+</section>
+
+<!-- Gráfico de velocidad -->
+<section class="card lab reveal">
+  <h3>Gráfico de Velocidad en Caída Libre</h3>
+  <div class="btns">
+    <button type="button" id="btn-grafico" class="btn primary">Mostrar</button>
+    <button type="button" id="btn-grafico-reset" class="btn soft">Reset</button>
+  </div>
+  <canvas id="canvas-grafico" width="320" height="240"></canvas>
+  <p class="note">La velocidad aumenta linealmente con el tiempo.</p>
+</section>
+
+
       </div>
     </section>
+    <!-- EXAMEN -->
+<section id="view-examen" class="view" aria-labelledby="tab-examen">
+  <header class="view-header">
+    <h2>Examen de Galileo & Kepler</h2>
+    <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
+  </header>
+
+  <div id="exam-container" class="exam-container card reveal">
+    <form id="exam-form" class="controls exam-form">
+      <!-- Las preguntas se insertan dinámicamente con JS -->
+    </form>
+    <div class="btns">
+      <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
+      <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
+    </div>
+    <div id="exam-result" class="exam-result"></div>
+  </div>
+</section>
+
+    
   </main>
 
   <!-- Modal biografías -->
