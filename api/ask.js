@@ -12,21 +12,20 @@ export default async function handler(req, res) {
   try {
     const geminiApiKey = process.env.GEMINI_API_KEY;
     if (!geminiApiKey) {
-      console.error("Falta la variable de entorno GEMINI_API_KEY");
+      console.error("Falta GEMINI_API_KEY en variables de entorno");
       return res.status(500).json({ message: 'Server misconfigured: missing API key' });
     }
 
-   const response = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`,
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
-  }
-);
-
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -35,8 +34,6 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-
-    // Intentar obtener texto en diferentes formatos
     const text =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       data?.candidates?.[0]?.output_text ||
