@@ -1,4 +1,3 @@
-
 // api/ask.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,6 +11,11 @@ export default async function handler(req, res) {
 
   try {
     const geminiApiKey = process.env.GEMINI_API_KEY;
+    if (!geminiApiKey) {
+      console.error("Falta la variable de entorno GEMINI_API_KEY");
+      return res.status(500).json({ message: 'Server misconfigured: missing API key' });
+    }
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
       {
@@ -20,24 +24,32 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }],
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
         }),
       }
     );
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       console.error('API Error:', errorData);
-      throw new Error('API request failed');
+      return res.status(500).json({ message: 'Gemini API request failed', error: errorData });
     }
 
     const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-    res.status(200).json({ answer: text });
+
+    // Intentar obtener texto en diferentes formatos
+    const text =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data?.candidates?.[0]?.output_text ||
+      "No se pudo obtener respuesta de Gemini.";
+
+    return res.status(200).json({ answer: text });
   } catch (error) {
     console.error('Error processing request:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
