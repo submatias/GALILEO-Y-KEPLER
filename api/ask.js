@@ -17,11 +17,13 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(
-      // La única línea que cambié es esta: el nombre del modelo y la versión
+      // URL corregida para el endpoint de generateContent de gemini-pro
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
         }),
