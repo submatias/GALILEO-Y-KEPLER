@@ -238,4 +238,26 @@ html,body{
     cursor: not-allowed;
     background: var(--card);
 }
+/* styles.css: Añadir al final del archivo para arreglar el examen en móvil */
+
+/* 1. Asegura que las preguntas se muestren como una columna */
+.exam-form {
+    display: flex;
+    flex-direction: column; /* Apila las preguntas */
+}
+
+/* 2. Forzar a que cada opción de respuesta ocupe su propia línea */
+.question label {
+    display: block; /* Hace que cada label ocupe todo el ancho disponible */
+    padding: 0.3rem 0; /* Añade un poco de espacio vertical entre opciones */
+    line-height: 1.4;
+}
+
+/* 3. Ajuste para que el texto de la opción se alinee mejor con el radio button */
+.question input[type="radio"] {
+    margin-right: 0.5rem;
+    /* Ajuste para evitar que el input quede flotando si hay wrap */
+    vertical-align: middle; 
+}
+
 
