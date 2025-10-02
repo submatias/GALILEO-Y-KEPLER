@@ -294,18 +294,23 @@
     <form method="dialog" class="modal-card">
       <header class="modal-head">
         <h3 id="bio-title">Título</h3>
-        <button class="icon-btn" value="cancel" aria-label="Cerrar">✕</button>
+        <button class="icon-btn" value="cancel" aria-label="Cerrar modal">X</button>
       </header>
-      <article id="bio-content" class="modal-body"></article>
-      <footer class="modal-foot">
-        <button class="btn soft" value="cancel">Cerrar</button>
+
+      <div id="bio-content" class="modal-body bio-content">
+        <div id="bio-slides-container" class="bio-slides-container">
+          </div>
+      </div>
+      
+      <footer class="slider-nav">
+          <button type="button" id="prev-slide" disabled>← Anterior</button>
+          <div id="slide-counter"></div>
+          <button type="button" id="next-slide">Siguiente →</button>
       </footer>
-    </form>
+      </form>
   </dialog>
 
-  <footer class="site-footer">
-   
-  </footer>
+  </main>
 
   <script src="app.js"></script>
 </body>
