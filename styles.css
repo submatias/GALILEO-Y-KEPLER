@@ -179,3 +179,63 @@ html,body{
 .question{padding:1rem; border:1px solid #ffffff20; border-radius:12px; background:#ffffff05}
 .question h4{margin:0 0 .5rem}
 .exam-result{margin-top:1rem; font-size:1.2rem; font-weight:700; color:var(--ok)}
+
+/* ... (Todo el contenido anterior de styles.css) ... */
+
+/* Estilos para el nuevo slider de Biografías */
+
+.bio-content {
+    /* Estilos para el contenedor del slider */
+    overflow: hidden; /* Oculta los slides fuera de la vista */
+    position: relative;
+    padding: 0 !important; /* Eliminar padding del modal-body para que el slide ocupe todo el ancho */
+}
+
+.bio-slides-container {
+    /* El carrusel real: tendrá el ancho de (N * 100%) y se moverá con transform */
+    display: flex;
+    transition: transform 0.3s ease-in-out; /* Animación de deslizamiento */
+}
+
+.bio-slide {
+    /* Cada párrafo es una "diapositiva" */
+    flex-shrink: 0; /* Asegura que el slide no se encoja */
+    width: 100%; /* Cada slide ocupa el 100% del ancho del contenedor */
+    padding: 1rem; /* Padding interno para que el texto no toque los bordes */
+    box-sizing: border-box;
+}
+
+.bio-slide p {
+    margin: 0; /* Elimina márgenes extra de los párrafos */
+    text-align: justify;
+    padding-bottom: 0.5rem; /* Pequeño espacio entre párrafos */
+}
+
+/* Estilos para los botones de navegación */
+.slider-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #ffffff1a;
+    background: #ffffff08;
+}
+
+.slider-nav button {
+    background: var(--ink);
+    border: none;
+    color: var(--text);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+
+.slider-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: var(--card);
+}
+
