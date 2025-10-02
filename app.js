@@ -1,4 +1,4 @@
-// -------- SPA Tabs & Ink indicator (CÓDIGO INTACTO) --------
+// -------- SPA Tabs & Ink indicator --------
 const tabs = document.querySelectorAll('.tab');
 const views = {
   inicio: document.getElementById('view-inicio'),
@@ -38,7 +38,7 @@ window.addEventListener('hashchange', () => {
 });
 activate((location.hash || '#inicio').replace('#',''));
 
-// -------- Animaciones on-scroll (CÓDIGO INTACTO) --------
+// -------- Animaciones on-scroll --------
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
@@ -46,7 +46,8 @@ const io = new IntersectionObserver((entries)=>{
 },{ threshold:.12 });
 document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-// -------- Biografías (modal) - MODIFICADO CON NUEVOS PARRAFOS --------
+
+// -------- Biografías (modal) - MODIFICADO CON SLIDER POR PÁRRAFO --------
 const bios = {
   galileo: {
     titulo: "Galileo Galilei (1564–1642)",
@@ -73,22 +74,61 @@ const bios = {
 
 const modal = document.getElementById('bio-modal');
 const bioTitle = document.getElementById('bio-title');
-const bioContent = document.getElementById('bio-content');
+// Nuevo elemento: el contenedor de slides
+const bioSlidesContainer = document.getElementById('bio-slides-container');
+// Nuevos elementos: botones de navegación
+const prevBtn = document.getElementById('prev-slide');
+const nextBtn = document.getElementById('next-slide');
+const counterDiv = document.getElementById('slide-counter');
+
+let currentSlideIndex = 0;
+let totalSlides = 0;
+
+function updateSliderUI() {
+    // Mover el contenedor de slides usando la propiedad transform para el efecto de deslizamiento
+    bioSlidesContainer.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+
+    // Actualizar botones y contador
+    prevBtn.disabled = currentSlideIndex === 0;
+    nextBtn.disabled = currentSlideIndex === totalSlides - 1;
+    counterDiv.textContent = `${currentSlideIndex + 1} / ${totalSlides}`;
+}
+
+function moveSlide(direction) {
+    const newIndex = currentSlideIndex + direction;
+    if (newIndex >= 0 && newIndex < totalSlides) {
+        currentSlideIndex = newIndex;
+        updateSliderUI();
+    }
+}
+
+prevBtn.addEventListener('click', () => moveSlide(-1));
+nextBtn.addEventListener('click', () => moveSlide(1));
 
 document.querySelectorAll('.portrait').forEach(card=>{
   const who = card.dataset.person;
   function openBio(){
     const b = bios[who];
     bioTitle.textContent = b.titulo;
-    // MODIFICACIÓN: Usar map para generar HTML con un div para cada párrafo
-    bioContent.innerHTML = b.texto.map((p, i) => `<div class="bio-slide" data-index="${i}"><p>${p}</p></div>`).join('');
+
+    // Inicializar el slider
+    currentSlideIndex = 0;
+    totalSlides = b.texto.length;
+    
+    // Generar HTML con un div para cada párrafo
+    bioSlidesContainer.innerHTML = b.texto.map((p, i) => 
+        `<div class="bio-slide" data-index="${i}"><p>${p}</p></div>`
+    ).join('');
+
+    updateSliderUI(); // Mostrar el primer slide y actualizar controles
     modal.showModal();
   }
   card.addEventListener('click', openBio);
   card.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBio(); }});
 });
 
-// -------- LAB: Galileo (MRUA / Tiro vertical) (CÓDIGO INTACTO) --------
+
+// -------- LAB: Galileo (MRUA / Tiro vertical) --------
 const $ = (id)=> document.getElementById(id);
 const gInput = $('g'), v0Input = $('v0'), h0Input = $('h0');
 const canvas = $('canvas-galileo');
@@ -189,7 +229,7 @@ canvas.addEventListener('mousemove', (e)=>{
 canvas.addEventListener('mousedown', ()=> dragging = true);
 window.addEventListener('mouseup', ()=> dragging = false);
 
-// -------- LAB: Kepler (T² = k·a³) + órbita SVG (CÓDIGO INTACTO) --------
+// -------- LAB: Kepler (T² = k·a³) + órbita SVG --------
 const aRange = $('a'), aOut = $('aOut'), kInput = $('k');
 const outT = $('T'), outT2 = $('T2'), outA3 = $('a3');
 const planet = document.getElementById('planet');
@@ -240,7 +280,7 @@ planet.style.animationDuration = '4s';
 updateKeplerUI();
 animateOrbit();
 
-// -------- LAB extra: Caída libre de dos masas (CÓDIGO INTACTO) --------
+// -------- LAB extra: Caída libre de dos masas --------
 const caidaCanvas = $("canvas-caida");
 if (caidaCanvas) {
   const ctxCaida = caidaCanvas.getContext("2d");
@@ -273,7 +313,7 @@ if (caidaCanvas) {
   $("btn-caida-reset").onclick = ()=> ctxCaida.clearRect(0,0,caidaCanvas.width,caidaCanvas.height);
 }
 
-// -------- LAB extra: Resistencia del aire (CÓDIGO INTACTO) --------
+// -------- LAB extra: Resistencia del aire --------
 const aireCanvas = $("canvas-aire");
 if (aireCanvas) {
   const ctxAire = aireCanvas.getContext("2d");
@@ -309,7 +349,7 @@ if (aireCanvas) {
   $("btn-aire-reset").onclick = ()=> ctxAire.clearRect(0,0,aireCanvas.width,aireCanvas.height);
 }
 
-// -------- LAB extra: Plano inclinado (CÓDIGO INTACTO) --------
+// -------- LAB extra: Plano inclinado --------
 const planoCanvas = $("canvas-plano");
 if (planoCanvas) {
   const ctxPlano = planoCanvas.getContext("2d");
@@ -343,7 +383,7 @@ if (planoCanvas) {
   $("angulo").addEventListener("input", e=> $("anguloOut").textContent = e.target.value+"°");
 }
 
-// -------- LAB extra: Gráfico de velocidad (CÓDIGO INTACTO) --------
+// -------- LAB extra: Gráfico de velocidad --------
 const grafCanvas = $("canvas-grafico");
 if (grafCanvas) {
   const ctxGraf = grafCanvas.getContext("2d");
@@ -369,7 +409,7 @@ if (grafCanvas) {
   $("btn-grafico-reset").onclick = ()=> ctxGraf.clearRect(0,0,grafCanvas.width,grafGrafico.height);
 }
 
-// -------- UX niceties (CÓDIGO INTACTO) --------
+// -------- UX niceties --------
 function initInkOnce(){ moveInk(); }
 window.addEventListener('load', initInkOnce);
 window.addEventListener('resize', ()=> {
@@ -377,10 +417,10 @@ window.addEventListener('resize', ()=> {
   moveInk();
 });
 
-// -------- Accesibilidad: cerrar modal con ESC (CÓDIGO INTACTO) --------
+// -------- Accesibilidad: cerrar modal con ESC --------
 modal.addEventListener('cancel', (e)=> { e.preventDefault(); modal.close(); });
 
-// -------- EXAMEN - MODIFICADO CON FEEDBACK --------
+// -------- EXAMEN - MODIFICADO CON FEEDBACK DETALLADO --------
 const examQuestions = [
   {q:"¿Qué demostró Galileo con la caída de los cuerpos?", opts:["Que los más pesados caen más rápido","Que todos caen con la misma aceleración","Que depende del viento"], ans:1, feedback: "La respuesta correcta es **Que todos caen con la misma aceleración**. Galileo demostró que, en ausencia de resistencia del aire, la aceleración de la gravedad es la misma para todos los objetos, independientemente de su masa."},
   {q:"¿Qué instrumento perfeccionó Galileo?", opts:["Microscopio","Telescopio","Barómetro"], ans:1, feedback: "La respuesta correcta es **Telescopio**. Galileo perfeccionó el diseño existente, logrando un aumento significativo, lo que le permitió hacer importantes descubrimientos astronómicos."},
@@ -432,7 +472,7 @@ function initExam(){
     let score=0;
     chosen.forEach((q,i)=>{
       const marked = form.querySelector(`input[name=q${i}]:checked`);
-      const isCorrect = marked && parseInt(marked.value)===q.ans; // <-- Obtiene si es correcto
+      const isCorrect = marked && parseInt(marked.value)===q.ans;
 
       if(isCorrect) score++;
       
@@ -464,7 +504,7 @@ function initExam(){
 // iniciar examen al entrar a la pestaña
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
 
-// -------- Integración de IA con Gemini (CÓDIGO INTACTO) --------
+// -------- Integración de IA con Gemini --------
 // 1. Añade los elementos HTML al DOM para que el código funcione
 const aiQuestionInput = document.getElementById('ai-question');
 const aiAnswerDiv = document.getElementById('ai-answer');
