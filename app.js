@@ -47,7 +47,7 @@ const io = new IntersectionObserver((entries)=>{
 document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
 
-// -------- Biografías (modal) - SLIDER POR PÁRRAFO --------
+// -------- Biografías (modal) - MODIFICADO CON SLIDER POR PÁRRAFO --------
 const bios = {
   galileo: {
     titulo: "Galileo Galilei (1564–1642)",
@@ -72,19 +72,23 @@ const bios = {
   }
 };
 
-const $ = (id)=> document.getElementById(id);
-const modal = $('bio-modal');
-const bioTitle = $('bio-title');
-const bioSlidesContainer = $('bio-slides-container');
-const prevBtn = $('prev-slide');
-const nextBtn = $('next-slide');
-const counterDiv = $('slide-counter');
+const modal = document.getElementById('bio-modal');
+const bioTitle = document.getElementById('bio-title');
+// Nuevo elemento: el contenedor de slides
+const bioSlidesContainer = document.getElementById('bio-slides-container');
+// Nuevos elementos: botones de navegación
+const prevBtn = document.getElementById('prev-slide');
+const nextBtn = document.getElementById('next-slide');
+const counterDiv = document.getElementById('slide-counter');
 
 let currentSlideIndex = 0;
 let totalSlides = 0;
 
 function updateSliderUI() {
+    // Mover el contenedor de slides usando la propiedad transform para el efecto de deslizamiento
     bioSlidesContainer.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+
+    // Actualizar botones y contador
     prevBtn.disabled = currentSlideIndex === 0;
     nextBtn.disabled = currentSlideIndex === totalSlides - 1;
     counterDiv.textContent = `${currentSlideIndex + 1} / ${totalSlides}`;
@@ -98,24 +102,25 @@ function moveSlide(direction) {
     }
 }
 
-if(prevBtn && nextBtn) {
-    prevBtn.addEventListener('click', () => moveSlide(-1));
-    nextBtn.addEventListener('click', () => moveSlide(1));
-}
+prevBtn.addEventListener('click', () => moveSlide(-1));
+nextBtn.addEventListener('click', () => moveSlide(1));
 
 document.querySelectorAll('.portrait').forEach(card=>{
   const who = card.dataset.person;
   function openBio(){
     const b = bios[who];
     bioTitle.textContent = b.titulo;
+
+    // Inicializar el slider
     currentSlideIndex = 0;
     totalSlides = b.texto.length;
     
+    // Generar HTML con un div para cada párrafo
     bioSlidesContainer.innerHTML = b.texto.map((p, i) => 
         `<div class="bio-slide" data-index="${i}"><p>${p}</p></div>`
     ).join('');
 
-    updateSliderUI(); 
+    updateSliderUI(); // Mostrar el primer slide y actualizar controles
     modal.showModal();
   }
   card.addEventListener('click', openBio);
@@ -124,98 +129,105 @@ document.querySelectorAll('.portrait').forEach(card=>{
 
 
 // -------- LAB: Galileo (MRUA / Tiro vertical) --------
+const $ = (id)=> document.getElementById(id);
 const gInput = $('g'), v0Input = $('v0'), h0Input = $('h0');
 const canvas = $('canvas-galileo');
-const ctx = canvas ? canvas.getContext('2d') : null;
+const ctx = canvas.getContext('2d');
 let animId = null, t = 0, dragging = false, dragBias = 0;
 
 function phys(t, g, v0, h0){
+  // s = h0 + v0*t - 1/2 g t^2 (eje vertical hacia arriba)
   const y = h0 + v0*t - 0.5*g*t*t;
   const v = v0 - g*t;
   return { y, v };
 }
 
-if (canvas) { 
-    function simular(){
-      cancelAnimationFrame(animId);
-      t = 0; dragBias = 0;
-      const g = Math.max(0, parseFloat(gInput.value) || 9.8);
-      const v0 = parseFloat(v0Input.value) || 0;
-      const h0 = parseFloat(h0Input.value) || 0;
+function simular(){
+  cancelAnimationFrame(animId);
+  t = 0; dragBias = 0;
+  const g = Math.max(0, parseFloat(gInput.value) || 9.8);
+  const v0 = parseFloat(v0Input.value) || 0;
+  const h0 = parseFloat(h0Input.value) || 0;
 
-      const tSube = v0 / g; 
-      const hMax = h0 + v0*tSube - 0.5*g*tSube*tSube;
-      const disc = (v0*v0) + 2*g*h0; 
-      const tVuelo = (v0 + Math.sqrt(disc))/g; 
+  // tiempos clave
+  const tSube = v0 / g; // tiempo a altura máxima (si v0>0)
+  const hMax = h0 + v0*tSube - 0.5*g*tSube*tSube;
+  // resolver tiempo de vuelo desde y=0 (suelo) => 0 = h0 + v0 t - 1/2 g t^2
+  const disc = (v0*v0) + 2*g*h0; // por cambio de signo
+  const tVuelo = (v0 + Math.sqrt(disc))/g; // raíz positiva
 
-      $('tvuelo').textContent = (tVuelo || 0).toFixed(2);
-      $('hmax').textContent = (hMax || 0).toFixed(2);
-      const vImpacto = Math.sqrt(Math.max(0, v0*v0 + 2*g*Math.max(0, hMax))); 
-      $('vimpacto').textContent = vImpacto.toFixed(2);
+  // mostrar lecturas
+  $('tvuelo').textContent = (tVuelo || 0).toFixed(2);
+  $('hmax').textContent = (hMax || 0).toFixed(2);
+  const vImpacto = Math.sqrt(Math.max(0, v0*v0 + 2*g*Math.max(0, hMax))); // aprox
+  $('vimpacto').textContent = vImpacto.toFixed(2);
 
-      const pxPerM = canvas.height / Math.max(1, Math.max(hMax, h0) + 2); 
-      const groundY = canvas.height - 10;
+  const pxPerM = canvas.height / Math.max(1, Math.max(hMax, h0) + 2); // margen
+  const groundY = canvas.height - 10;
 
-      function draw(){
-        t += 1/60; 
-        const { y } = phys(t, g, v0, h0);
-        const yPx = groundY - (y * pxPerM) - dragBias;
+  function draw(){
+    t += 1/60; // 60 FPS
+    const { y } = phys(t, g, v0, h0);
+    // mapping: y metros -> pantalla
+    const yPx = groundY - (y * pxPerM) - dragBias;
 
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+    // clear
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        ctx.strokeStyle = 'rgba(255,255,255,.25)';
-        ctx.beginPath();
-        ctx.moveTo(0, groundY+0.5);
-        ctx.lineTo(canvas.width, groundY+0.5);
-        ctx.stroke();
+    // ground
+    ctx.strokeStyle = 'rgba(255,255,255,.25)';
+    ctx.beginPath();
+    ctx.moveTo(0, groundY+0.5);
+    ctx.lineTo(canvas.width, groundY+0.5);
+    ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(40, groundY - (h0*pxPerM) - dragBias);
-        const steps = Math.floor(Math.max(t, tVuelo)*60);
-        for(let i=0;i<steps;i++){
-          const tt = i/60;
-          const { y: yy } = phys(tt, g, v0, h0);
-          const yypx = groundY - (yy * pxPerM) - dragBias;
-          const xx = 40 + tt* (canvas.width - 100)/Math.max(tVuelo, 1);
-          ctx.lineTo(xx, yypx);
-        }
-        ctx.strokeStyle = 'rgba(124,137,255,.9)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        const x = 40 + t * (canvas.width - 100)/Math.max(tVuelo, 1);
-        ctx.beginPath();
-        ctx.arc(x, yPx, 8, 0, Math.PI*2);
-        ctx.fillStyle = '#5be4a8';
-        ctx.fill();
-
-        ctx.fillStyle = 'rgba(255,255,255,.7)';
-        ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto';
-        ctx.fillText(`t = ${t.toFixed(2)} s`, 20, 24);
-        ctx.fillText(`y = ${Math.max(0,y).toFixed(2)} m`, 20, 44);
-
-        if(t < tVuelo && y >= 0){
-          animId = requestAnimationFrame(draw);
-        }
-      }
-      draw();
+    // trajectory trail
+    ctx.beginPath();
+    ctx.moveTo(40, groundY - (h0*pxPerM) - dragBias);
+    const steps = Math.floor(Math.max(t, tVuelo)*60);
+    for(let i=0;i<steps;i++){
+      const tt = i/60;
+      const yy = groundY - (phys(tt, g, v0, h0).y * pxPerM) - dragBias;
+      const xx = 40 + tt* (canvas.width - 100)/Math.max(tVuelo, 1);
+      ctx.lineTo(xx, yy);
     }
+    ctx.strokeStyle = 'rgba(124,137,255,.9)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-    $('btn-simular').addEventListener('click', simular);
-    $('btn-reiniciar').addEventListener('click', ()=>{
-      cancelAnimationFrame(animId);
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      $('tvuelo').textContent = $('hmax').textContent = $('vimpacto').textContent = '—';
-      t = 0; dragBias = 0;
-    });
-    canvas.addEventListener('mousemove', (e)=>{
-      if(!dragging) return;
-      dragBias += (e.movementY || 0) * 0.6; 
-    });
-    canvas.addEventListener('mousedown', ()=> dragging = true);
-    window.addEventListener('mouseup', ()=> dragging = false);
+    // projectile
+    const x = 40 + t * (canvas.width - 100)/Math.max(tVuelo, 1);
+    ctx.beginPath();
+    ctx.arc(x, yPx, 8, 0, Math.PI*2);
+    ctx.fillStyle = '#5be4a8';
+    ctx.fill();
+
+    // labels
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto';
+    ctx.fillText(`t = ${t.toFixed(2)} s`, 20, 24);
+    ctx.fillText(`y = ${Math.max(0,y).toFixed(2)} m`, 20, 44);
+
+    if(t < tVuelo && y >= 0){
+      animId = requestAnimationFrame(draw);
+    }
+  }
+  draw();
 }
 
+$('btn-simular').addEventListener('click', simular);
+$('btn-reiniciar').addEventListener('click', ()=>{
+  cancelAnimationFrame(animId);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  $('tvuelo').textContent = $('hmax').textContent = $('vimpacto').textContent = '—';
+  t = 0; dragBias = 0;
+});
+canvas.addEventListener('mousemove', (e)=>{
+  if(!dragging) return;
+  dragBias += (e.movementY || 0) * 0.6; // mini “empujón”
+});
+canvas.addEventListener('mousedown', ()=> dragging = true);
+window.addEventListener('mouseup', ()=> dragging = false);
 
 // -------- LAB: Kepler (T² = k·a³) + órbita SVG --------
 const aRange = $('a'), aOut = $('aOut'), kInput = $('k');
@@ -223,311 +235,230 @@ const outT = $('T'), outT2 = $('T2'), outA3 = $('a3');
 const planet = document.getElementById('planet');
 const ellipse = document.getElementById('ellipse');
 
-if (aRange && planet && ellipse) {
-  function updateKeplerUI(){
-    const a = parseFloat(aRange.value);
-    const k = parseFloat(kInput.value);
-    aOut.textContent = a.toFixed(1);
+function updateKeplerUI(){
+  const a = parseFloat(aRange.value);
+  const k = parseFloat(kInput.value);
+  aOut.textContent = a.toFixed(1);
 
-    const T2 = k * Math.pow(a, 3);
-    const T = Math.sqrt(T2);
+  const T2 = k * Math.pow(a, 3);
+  const T = Math.sqrt(T2);
 
-    outT.textContent = T.toFixed(2);
-    outT2.textContent = T2.toFixed(2);
-    outA3.textContent = Math.pow(a,3).toFixed(2);
+  outT.textContent = T.toFixed(2);
+  outT2.textContent = T2.toFixed(2);
+  outA3.textContent = Math.pow(a,3).toFixed(2);
 
-    const duration = Math.max(2, T * 2); 
-    planet.style.animationDuration = `${duration}s`;
+  // Ajustar velocidad de animación: más a => mayor T => animación más lenta.
+  // Usamos CSS variable via style: duration en segundos proporcional a T.
+  const duration = Math.max(2, T * 2); // escala visual
+  planet.style.animationDuration = `${duration}s`;
 
-    const rx0 = 110, ry0 = 80;
-    ellipse.setAttribute('rx', (rx0 * Math.cbrt(a/1)).toFixed(1));
-    ellipse.setAttribute('ry', (ry0 * Math.cbrt(a/1) * 0.9).toFixed(1));
-  }
-
-  let theta = 0;
-  function animateOrbit(){
-    const rx = parseFloat(ellipse.getAttribute('rx'));
-    const ry = parseFloat(ellipse.getAttribute('ry'));
-    const cx = 150, cy = 150;
-    const dur = parseFloat(getComputedStyle(planet).animationDuration) || 4;
-    theta += (2*Math.PI) / (60*dur);
-    const x = cx + rx * Math.cos(theta);
-    const y = cy + ry * Math.sin(theta);
-    planet.setAttribute('cx', x.toFixed(2));
-    planet.setAttribute('cy', y.toFixed(2));
-    requestAnimationFrame(animateOrbit);
-  }
-  
-  aRange.addEventListener('input', updateKeplerUI);
-  kInput.addEventListener('input', updateKeplerUI);
-
-  planet.style.animationDuration = '4s';
-  updateKeplerUI();
-  animateOrbit();
+  // Escalar elipse suave en x/y para sugerir cambio de a
+  const rx0 = 110, ry0 = 80;
+  ellipse.setAttribute('rx', (rx0 * Math.cbrt(a/1)).toFixed(1));
+  ellipse.setAttribute('ry', (ry0 * Math.cbrt(a/1) * 0.9).toFixed(1));
 }
+aRange.addEventListener('input', updateKeplerUI);
+kInput.addEventListener('input', updateKeplerUI);
 
+// animación del planeta alrededor de la elipse (aproximación paramétrica)
+let theta = 0;
+function animateOrbit(){
+  const rx = parseFloat(ellipse.getAttribute('rx'));
+  const ry = parseFloat(ellipse.getAttribute('ry'));
+  const cx = 150, cy = 150;
+  // velocidad angular básica; el factor depende de duración CSS
+  const dur = parseFloat(getComputedStyle(planet).animationDuration) || 4;
+  theta += (2*Math.PI) / (60*dur);
+  const x = cx + rx * Math.cos(theta);
+  const y = cy + ry * Math.sin(theta);
+  planet.setAttribute('cx', x.toFixed(2));
+  planet.setAttribute('cy', y.toFixed(2));
+  requestAnimationFrame(animateOrbit);
+}
+// CSS fallback (define duración inicial)
+planet.style.animationDuration = '4s';
+updateKeplerUI();
+animateOrbit();
 
-// ----------------------------------------------------
-// -------- LABS EXTRA: Caída Libre y Resistencia al Aire (ACTUALIZADOS)
-// ----------------------------------------------------
-
-// Constantes globales para estas dos simulaciones
-const G_CONST = 9.8; // Gravedad (m/s^2)
-const H0_SIM = 20; // Altura inicial de la simulación (m)
-const DT = 1/60; // Intervalo de tiempo (s)
-const DRAG_COEFF = 0.05; // Coeficiente de arrastre (Arbitrario, ajusta la resistencia)
-
-// -------- LAB extra: Caída libre de dos masas (ACTUALIZADO) --------
+// -------- LAB extra: Caída libre de dos masas --------
 const caidaCanvas = $("canvas-caida");
 if (caidaCanvas) {
   const ctxCaida = caidaCanvas.getContext("2d");
-  let caidaAnim, tCaida = 0;
-
+  let caidaAnim;
   function simularCaida() {
     cancelAnimationFrame(caidaAnim);
-    tCaida = 0; // Reinicia el tiempo
-
-    const m1 = parseFloat($("masa1").value) || 10;
+    let y1 = 20, y2 = 20;
+    const m1 = parseFloat($("masa1").value) || 1;
     const m2 = parseFloat($("masa2").value) || 1;
-
-    // Cálculo del tiempo de vuelo para determinar el fin de la animación
-    const tVuelo = Math.sqrt(2 * H0_SIM / G_CONST);
-    const pxPerM = caidaCanvas.height / (H0_SIM + 2); // Escala para dibujar
-
     function draw() {
-      tCaida += DT;
-
-      // Cinemática de caída libre (la misma para ambas masas)
-      const ySim_new = H0_SIM - 0.5 * G_CONST * tCaida * tCaida;
-      const vSim_new = G_CONST * tCaida;
-      const aSim = G_CONST; // Aceleración constante
-
-      const ySim = Math.max(0, ySim_new);
-      const vSim = (ySim > 0) ? vSim_new : 0;
-      const aDisplay = (ySim > 0) ? aSim : 0; // Aceleración es 0 en el suelo
-
-      const groundY = caidaCanvas.height - 10;
-      const yPx1 = groundY - (ySim * pxPerM);
-      const yPx2 = groundY - (ySim * pxPerM);
-
-      ctxCaida.clearRect(0, 0, caidaCanvas.width, caidaCanvas.height);
-      
-      // Dibuja el suelo
-      ctxCaida.strokeStyle = 'rgba(255,255,255,.25)';
-      ctxCaida.beginPath();
-      ctxCaida.moveTo(0, groundY + 0.5);
-      ctxCaida.lineTo(caidaCanvas.width, groundY + 0.5);
-      ctxCaida.stroke();
-
+      ctxCaida.clearRect(0,0,caidaCanvas.width,caidaCanvas.height);
       // Objeto 1
       ctxCaida.fillStyle = "#7c89ff";
-      ctxCaida.beginPath();
-      ctxCaida.arc(100, yPx1, 10 + Math.log(m1 + 1) * 5, 0, 2 * Math.PI);
+      ctxCaida.beginPath(); 
+      ctxCaida.arc(100,y1,10+Math.log(m1+1)*5,0,2*Math.PI); 
       ctxCaida.fill();
-
       // Objeto 2
       ctxCaida.fillStyle = "#ffd166";
-      ctxCaida.beginPath();
-      ctxCaida.arc(200, yPx2, 5 + Math.log(m2 + 1) * 5, 0, 2 * Math.PI);
+      ctxCaida.beginPath(); 
+      ctxCaida.arc(200,y2,10+Math.log(m2+1)*5,0,2*Math.PI); 
       ctxCaida.fill();
-
-
-      // ACTUALIZACIÓN DE LECTURAS (TODOS LOS DATOS)
-      $("tcaida").textContent = tCaida.toFixed(2);
-      
-      // Objeto 1
-      $("ycaida1").textContent = ySim.toFixed(2);
-      $("vcaida1").textContent = vSim.toFixed(2);
-      $("acaida1").textContent = aDisplay.toFixed(2); 
-      
-      // Objeto 2
-      $("ycaida2").textContent = ySim.toFixed(2);
-      $("vcaida2").textContent = vSim.toFixed(2);
-      $("acaida2").textContent = aDisplay.toFixed(2);
-
-      if (ySim > 0 && tCaida < tVuelo + DT) {
+      if (y1 < 200 && y2 < 200) {
+        y1 += 3; y2 += 3; // misma aceleración para demostrar independencia de la masa
         caidaAnim = requestAnimationFrame(draw);
       }
     }
     draw();
   }
-
   $("btn-caida").onclick = simularCaida;
-  $("btn-caida-reset").onclick = () => {
-    cancelAnimationFrame(caidaAnim);
-    ctxCaida.clearRect(0, 0, caidaCanvas.width, caidaCanvas.height);
-    // Reinicia las lecturas
-    $("tcaida").textContent = "—";
-    $("ycaida1").textContent = $("vcaida1").textContent = $("acaida1").textContent = "—";
-    $("ycaida2").textContent = $("vcaida2").textContent = $("acaida2").textContent = "—";
-  };
+  $("btn-caida-reset").onclick = ()=> ctxCaida.clearRect(0,0,caidaCanvas.width,caidaCanvas.height);
 }
 
-// -------- LAB extra: Resistencia del aire (ACTUALIZADO) --------
-
-// Función de física para el cálculo dinámico de la aceleración
-function updatePhysics(y, v, m, drag) {
-    if (y <= 0) return { y: 0, v: 0, a: 0 };
-    
-    let a = G_CONST; 
-    
-    if (drag) {
-        // Aceleración de resistencia: (k * v^2) / m. Resta de la gravedad.
-        const resistanceAccel = DRAG_COEFF * v * v / m; 
-        a = G_CONST - resistanceAccel; 
-    }
-    
-    // Integración de Euler simple (cálculo de la posición y velocidad futuras)
-    const vNew = v + a * DT;
-    const yNew = y - vNew * DT; 
-    
-    return { 
-        y: Math.max(0, yNew), 
-        v: Math.max(0, vNew),
-        a: a 
-    };
-}
-
-
+// -------- LAB extra: Resistencia del aire --------
 const aireCanvas = $("canvas-aire");
 if (aireCanvas) {
   const ctxAire = aireCanvas.getContext("2d");
-  let aireAnim, tAire = 0;
-
+  let aireAnim;
   function simularAire() {
     cancelAnimationFrame(aireAnim);
-    tAire = 0;
-
-    let ySim1 = H0_SIM;
-    let ySim2 = H0_SIM;
-    let vSim1 = 0;
-    let vSim2 = 0;
-    let aSim1 = G_CONST; 
-    let aSim2 = G_CONST;
-
-    const mBola = parseFloat($("masaBola").value) || 10;
-    const mPluma = parseFloat($("masaPluma").value) || 0.01;
+    let y1 = 20, y2 = 20;
+    const mBola = parseFloat($("masaBola").value) || 1;
+    const mPluma = parseFloat($("masaPluma").value) || 0.1;
     const conAire = $("aireToggle").checked;
-
-    const pxPerM = aireCanvas.height / (H0_SIM + 2);
-    const groundY = aireCanvas.height - 10;
-    
     function draw() {
-      tAire += DT;
-
-      // Objeto 1 (Bola)
-      const res1 = updatePhysics(ySim1, vSim1, mBola, conAire);
-      ySim1 = res1.y;
-      vSim1 = res1.v;
-      aSim1 = res1.a;
-
-      // Objeto 2 (Pluma)
-      const res2 = updatePhysics(ySim2, vSim2, mPluma, conAire);
-      ySim2 = res2.y;
-      vSim2 = res2.v;
-      aSim2 = res2.a;
-
-      // Dibuja
-      ctxAire.clearRect(0, 0, aireCanvas.width, aireCanvas.height);
-
-      // Dibuja el suelo
-      ctxAire.strokeStyle = 'rgba(255,255,255,.25)';
-      ctxAire.beginPath();
-      ctxAire.moveTo(0, groundY + 0.5);
-      ctxAire.lineTo(aireCanvas.width, groundY + 0.5);
-      ctxAire.stroke();
-
-      // Posiciones de dibujo
-      const yPx1 = groundY - (ySim1 * pxPerM);
-      const yPx2 = groundY - (ySim2 * pxPerM);
-
-      // Objeto 1 (Bola)
-      ctxAire.fillStyle = "#7c89ff";
-      ctxAire.beginPath();
-      ctxAire.arc(100, yPx1, 10 + Math.log(mBola + 1) * 5, 0, 2 * Math.PI);
+      ctxAire.clearRect(0,0,aireCanvas.width,aireCanvas.height);
+      // Bola
+      ctxAire.fillStyle = "#5be4a8";
+      ctxAire.beginPath(); 
+      ctxAire.arc(100,y1,10+Math.log(mBola+1)*5,0,2*Math.PI); 
       ctxAire.fill();
-
-      // Objeto 2 (Pluma)
-      ctxAire.fillStyle = "#ffd166";
-      ctxAire.beginPath();
-      ctxAire.arc(200, yPx2, 5 + Math.log(mPluma + 1) * 5, 0, 2 * Math.PI);
+      // Pluma
+      ctxAire.fillStyle = "#e66";
+      ctxAire.beginPath(); 
+      ctxAire.arc(200,y2,10+Math.log(mPluma+1)*5,0,2*Math.PI); 
       ctxAire.fill();
-
-      // ACTUALIZACIÓN DE LECTURAS (TODOS LOS DATOS)
-      $("taire").textContent = tAire.toFixed(2);
-      
-      // Objeto 1
-      $("yaire1").textContent = ySim1.toFixed(2);
-      $("vaire1").textContent = vSim1.toFixed(2);
-      $("aaire1").textContent = aSim1.toFixed(2); 
-      
-      // Objeto 2
-      $("yaire2").textContent = ySim2.toFixed(2);
-      $("vaire2").textContent = vSim2.toFixed(2);
-      $("aaire2").textContent = aSim2.toFixed(2);
-
-      if (ySim1 > 0 || ySim2 > 0) {
+      if (y1 < 200 || y2 < 200) {
+        y1 += 3; 
+        // Con aire, la pluma se frena más porque su masa es pequeña
+        y2 += conAire ? Math.max(0.5, 3 * (mPluma/mBola)) : 3;
         aireAnim = requestAnimationFrame(draw);
       }
     }
     draw();
   }
-  
   $("btn-aire").onclick = simularAire;
-  $("btn-aire-reset").onclick = () => {
-    cancelAnimationFrame(aireAnim);
-    ctxAire.clearRect(0, 0, aireCanvas.width, aireCanvas.height);
-    // Reinicia las lecturas
-    $("taire").textContent = "—";
-    $("yaire1").textContent = $("vaire1").textContent = $("aaire1").textContent = "—";
-    $("yaire2").textContent = $("vaire2").textContent = $("aaire2").textContent = "—";
-  };
+  $("btn-aire-reset").onclick = ()=> ctxAire.clearRect(0,0,aireCanvas.width,aireCanvas.height);
 }
 
-// -------- EXAMEN (LÓGICA RESTAURADA Y COMPLETA) --------
-const examQuestions = [
-  // Nueva estructura: {q: pregunta, opts: [opciones], ans: índice, feedback: oración explicativa}
-  {q:"¿Qué demostró Galileo con la caída de los cuerpos?", opts:["Que los más pesados caen más rápido","Que todos caen con la misma aceleración","Que depende del viento"], ans:1, feedback: "Galileo demostró que **todos los cuerpos caen con la misma aceleración** independientemente de su masa, si se ignora la resistencia del aire."},
-  {q:"¿Qué instrumento perfeccionó Galileo?", opts:["Microscopio","Telescopio","Barómetro"], ans:1, feedback: "Galileo perfeccionó el **telescopio**, lo que le permitió hacer observaciones astronómicas cruciales."},
-  {q:"¿Qué descubrió Galileo en Júpiter?", opts:["Anillos","Lunas","Nubes"], ans:1, feedback: "Descubrió las cuatro **lunas** más grandes de Júpiter (Io, Europa, Ganímedes y Calisto), que contradecían el modelo geocéntrico."},
-  {q:"¿Qué estudió Galileo en los planos inclinados?", opts:["El movimiento uniformemente acelerado","La gravitación universal","La electricidad"], ans:0, feedback: "Los planos inclinados le permitieron estudiar y medir con precisión el **movimiento uniformemente acelerado**."},
-  {q:"¿Qué defendía Galileo sobre el conocimiento?", opts:["El método experimental","La autoridad de Aristóteles","La magia"], ans:0, feedback: "Galileo fue un defensor clave del **método experimental**, basando la ciencia en la observación y la medición."},
-  {q:"¿Qué forma tienen las órbitas planetarias según Kepler?", opts:["Circulares","Elípticas","Rectangulares"], ans:1, feedback: "La **primera ley de Kepler** establece que los planetas se mueven en órbitas **elípticas**, con el Sol en uno de sus focos."},
-  {q:"La 2ª ley de Kepler dice:", opts:["Velocidad constante en toda la órbita","Áreas iguales en tiempos iguales","Planetas inmóviles"], ans:1, feedback: "La **segunda ley de Kepler** afirma que un planeta barre **áreas iguales en tiempos iguales**, lo que implica que la velocidad varía en la órbita."},
-  {q:"La 3ª ley de Kepler relaciona:", opts:["Periodo y radio","Tiempo y masa","Periodo y semieje mayor"], ans:2, feedback: "La **tercera ley de Kepler** relaciona el **periodo (T)** de la órbita con el **semieje mayor (a)**, mediante la fórmula T² ∝ a³."},
-  {q:"¿Quién proporcionó a Kepler los datos para sus leyes?", opts:["Newton","Copérnico","Tycho Brahe"], ans:2, feedback: "Kepler heredó y analizó los detallados datos de observación de su mentor, el astrónomo **Tycho Brahe**."},
-  {q:"¿Qué descubrió Kepler sobre Marte?", opts:["Que su órbita es elíptica","Que no gira","Que tiene anillos"], ans:0, feedback: "El estudio de la órbita de Marte fue crucial para que Kepler dedujera que las órbitas son **elípticas**."},
-  {q:"¿Qué representa 'g' en la física de Galileo?", opts:["Gravedad","Gas","Galaxia"], ans:0, feedback: "La 'g' representa la aceleración debida a la **gravedad** terrestre (aproximadamente 9.8 m/s²)."},
-  {q:"¿Qué observó Galileo en Venus?", opts:["Manchas","Fases","Nubes"], ans:1, feedback: "Galileo observó las **fases** de Venus, similares a las de la Luna."},
-  {q:"¿Qué implican las fases de Venus?", opts:["Prueba del heliocentrismo","Prueba del geocentrismo","Prueba de que Venus no existe"], ans:0, feedback: "Las fases completas de Venus solo pueden ocurrir si **Venus orbita el Sol**, lo que fue una prueba clave para el heliocentrismo."},
-  {q:"¿Qué midió Galileo con el péndulo?", opts:["El tiempo","La distancia","La velocidad de la luz"], ans:0, feedback: "Galileo utilizó su estudio del péndulo para medir y estandarizar el **tiempo** en sus experimentos de movimiento."},
-  {q:"¿Qué ley explica la variación de velocidad en la órbita?", opts:["1ª","2ª","3ª"], ans:1, feedback: "La **segunda ley de Kepler** explica que el planeta va más rápido cerca del Sol y más lento lejos de él."},
-  {q:"Kepler era originario de:", opts:["Italia","Alemania","Francia"], ans:1, feedback: "Johannes Kepler fue un astrónomo y matemático de **Alemania**."},
-  {q:"¿Qué descubrió Galileo en el Sol?", opts:["Manchas solares","Eclipses","Auroras"], ans:0, feedback: "Galileo observó las **manchas solares**, sugiriendo que el Sol no era una esfera perfecta e inmutable."},
-  {q:"¿Qué descubrió Galileo en la Luna?", opts:["Que es lisa","Que tiene montañas y cráteres","Que brilla sola"], ans:1, feedback: "Galileo descubrió que la Luna tiene una superficie irregular con **montañas y cráteres**, haciéndola similar a la Tierra."},
-  {q:"La constante k en la 3ª ley depende de:", opts:["El sistema central","La masa del planeta","Nada"], ans:0, feedback: "La constante 'k' de la tercera ley (T² = k·a³) depende únicamente de la masa del cuerpo central, es decir, del **sistema central** (como el Sol)."},
-  {q:"Galileo nació en:", opts:["1564","1571","1642"], ans:0, feedback: "Galileo Galilei nació en Pisa, Italia, en el año **1564**."}
-];
+// -------- LAB extra: Plano inclinado --------
+const planoCanvas = $("canvas-plano");
+if (planoCanvas) {
+  const ctxPlano = planoCanvas.getContext("2d");
+  let planoAnim;
+  function simularPlano() {
+    cancelAnimationFrame(planoAnim);
+    const angulo = parseInt($("angulo").value);
+    $("anguloOut").textContent = angulo + "°";
+    let x = 40, y = 180;
+    const rad = angulo * Math.PI/180;
+    const dx = Math.cos(rad) * 2;
+    const dy = -Math.sin(rad) * 2;
+    function draw() {
+      ctxPlano.clearRect(0,0,planoCanvas.width,planoCanvas.height);
+      ctxPlano.strokeStyle = "#aaa";
+      ctxPlano.beginPath();
+      ctxPlano.moveTo(20,200);
+      ctxPlano.lineTo(300,200 - Math.tan(rad)*280);
+      ctxPlano.stroke();
+      ctxPlano.fillStyle = "#7c89ff";
+      ctxPlano.fillRect(x,y,20,20);
+      if (x < 260) {
+        x += dx; y += dy;
+        planoAnim = requestAnimationFrame(draw);
+      }
+    }
+    draw();
+  }
+  $("btn-plano").onclick = simularPlano;
+  $("btn-plano-reset").onclick = ()=> ctxPlano.clearRect(0,0,planoCanvas.width,planoCanvas.height);
+  $("angulo").addEventListener("input", e=> $("anguloOut").textContent = e.target.value+"°");
+}
 
-let chosenQuestions = []; 
+// -------- LAB extra: Gráfico de velocidad --------
+const grafCanvas = $("canvas-grafico");
+if (grafCanvas) {
+  const ctxGraf = grafCanvas.getContext("2d");
+  let grafAnim;
+  function simularGrafico() {
+    cancelAnimationFrame(grafAnim);
+    let t=0;
+    function draw() {
+      ctxGraf.clearRect(0,0,grafCanvas.width,grafCanvas.height);
+      ctxGraf.beginPath();
+      ctxGraf.moveTo(20,220);
+      for (let i=0;i<t;i++){
+        const x=20+i, y=220 - 0.8*i;
+        ctxGraf.lineTo(x,y);
+      }
+      ctxGraf.strokeStyle="#7c89ff";
+      ctxGraf.stroke();
+      if(t<280){ t++; grafAnim=requestAnimationFrame(draw);}
+    }
+    draw();
+  }
+  $("btn-grafico").onclick = simularGrafico;
+  $("btn-grafico-reset").onclick = ()=> ctxGraf.clearRect(0,0,grafCanvas.width,grafGrafico.height);
+}
+
+// -------- UX niceties --------
+function initInkOnce(){ moveInk(); }
+window.addEventListener('load', initInkOnce);
+window.addEventListener('resize', ()=> {
+  // recalcular para retratos al cambiar layout
+  moveInk();
+});
+
+// -------- Accesibilidad: cerrar modal con ESC --------
+modal.addEventListener('cancel', (e)=> { e.preventDefault(); modal.close(); });
+
+// -------- EXAMEN - MODIFICADO CON FEEDBACK DETALLADO --------
+const examQuestions = [
+  {q:"¿Qué demostró Galileo con la caída de los cuerpos?", opts:["Que los más pesados caen más rápido","Que todos caen con la misma aceleración","Que depende del viento"], ans:1, feedback: "La respuesta correcta es **Que todos caen con la misma aceleración**. Galileo demostró que, en ausencia de resistencia del aire, la aceleración de la gravedad es la misma para todos los objetos, independientemente de su masa."},
+  {q:"¿Qué instrumento perfeccionó Galileo?", opts:["Microscopio","Telescopio","Barómetro"], ans:1, feedback: "La respuesta correcta es **Telescopio**. Galileo perfeccionó el diseño existente, logrando un aumento significativo, lo que le permitió hacer importantes descubrimientos astronómicos."},
+  {q:"¿Qué descubrió Galileo en Júpiter?", opts:["Anillos","Lunas","Nubes"], ans:1, feedback: "La respuesta correcta es **Lunas**. Descubrió las cuatro lunas más grandes de Júpiter (Ío, Europa, Ganimedes y Calisto), que contradecían la idea de que todo orbitaba la Tierra."},
+  {q:"¿Qué estudió Galileo en los planos inclinados?", opts:["El movimiento uniformemente acelerado","La gravitación universal","La electricidad"], ans:0, feedback: "La respuesta correcta es **El movimiento uniformemente acelerado**. Los planos inclinados le permitieron 'ralentizar' la caída libre para poder medir con precisión la relación lineal entre la velocidad y el tiempo, una característica de la aceleración uniforme."},
+  {q:"¿Qué defendía Galileo sobre el conocimiento?", opts:["El método experimental","La autoridad de Aristóteles","La magia"], ans:0, feedback: "La respuesta correcta es **El método experimental**. Galileo es considerado el padre del método científico por su énfasis en la observación, la experimentación y la matematización de la naturaleza."},
+  {q:"¿Qué forma tienen las órbitas planetarias según Kepler?", opts:["Circulares","Elípticas","Rectangulares"], ans:1, feedback: "La respuesta correcta es **Elípticas**. La Primera Ley de Kepler establece que los planetas se mueven en elipses, con el Sol en uno de los focos."},
+  {q:"La 2ª ley de Kepler dice:", opts:["Velocidad constante en toda la órbita","Áreas iguales en tiempos iguales","Planetas inmóviles"], ans:1, feedback: "La respuesta correcta es **Áreas iguales en tiempos iguales**. Esta ley implica que los planetas se mueven más rápido cuando están más cerca del Sol (perihelio) y más lento cuando están más lejos (afelio)."},
+  {q:"La 3ª ley de Kepler relaciona:", opts:["Periodo y radio","Tiempo y masa","Periodo y semieje mayor"], ans:2, feedback: "La respuesta correcta es **Periodo y semieje mayor**. La Tercera Ley establece que el cuadrado del período orbital ($T^2$) es proporcional al cubo del semieje mayor de la órbita ($a^3$)."},
+  {q:"¿Quién proporcionó a Kepler los datos para sus leyes?", opts:["Newton","Copérnico","Tycho Brahe"], ans:2, feedback: "La respuesta correcta es **Tycho Brahe**. Kepler heredó y analizó los precisos datos de observación de Tycho Brahe tras su muerte, lo que fue crucial para formular sus tres leyes."},
+  {q:"¿Qué descubrió Kepler sobre Marte?", opts:["Que su órbita es elíptica","Que no gira","Que tiene anillos"], ans:0, feedback: "La respuesta correcta es **Que su órbita es elíptica**. El estudio riguroso de la órbita de Marte fue lo que finalmente llevó a Kepler a abandonar las órbitas circulares y postular su Primera Ley."},
+  {q:"¿Qué representa 'g' en la física de Galileo?", opts:["Gravedad","Gas","Galaxia"], ans:0, feedback: "La respuesta correcta es **Gravedad** (o más precisamente, la aceleración debida a la gravedad)."},
+  {q:"¿Qué observó Galileo en Venus?", opts:["Manchas","Fases","Nubes"], ans:1, feedback: "La respuesta correcta es **Fases**. Las fases de Venus son similares a las de la Luna, un fenómeno solo posible si Venus orbita el Sol, lo que fue una prueba clave para el heliocentrismo."},
+  {q:"¿Qué implican las fases de Venus?", opts:["Prueba del heliocentrismo","Prueba del geocentrismo","Prueba de que Venus no existe"], ans:0, feedback: "La respuesta correcta es **Prueba del heliocentrismo**. La observación de un ciclo completo de fases de Venus es imposible bajo el modelo geocéntrico ptolemaico."},
+  {q:"¿Qué midió Galileo con el péndulo?", opts:["El tiempo","La distancia","La velocidad de la luz"], ans:0, feedback: "La respuesta correcta es **El tiempo**. Galileo notó la isocronía del péndulo (periodo constante para oscilaciones pequeñas) y sugirió su uso para medir el tiempo."},
+  {q:"¿Qué ley explica la variación de velocidad en la órbita?", opts:["1ª","2ª","3ª"], ans:1, feedback: "La respuesta correcta es **2ª**. La Segunda Ley de Kepler (Áreas iguales) explica que la velocidad orbital varía, siendo máxima en el perihelio y mínima en el afelio."},
+  {q:"Kepler era originario de:", opts:["Italia","Alemania","Francia"], ans:1, feedback: "La respuesta correcta es **Alemania**. Kepler nació en la ciudad de Weil der Stadt, que hoy forma parte de Alemania."},
+  {q:"¿Qué descubrió Galileo en el Sol?", opts:["Manchas solares","Eclipses","Auroras"], ans:0, feedback: "La respuesta correcta es **Manchas solares**. Las observó y demostró que estaban en la superficie solar, lo que implicaba que el Sol no era una esfera perfecta e inmutable."},
+  {q:"¿Qué descubrió Galileo en la Luna?", opts:["Que es lisa","Que tiene montañas y cráteres","Que brilla sola"], ans:1, feedback: "La respuesta correcta es **Que tiene montañas y cráteres**. Esta observación refutó la idea aristotélica de que los cuerpos celestes eran perfectos y lisos."},
+  {q:"La constante k en la 3ª ley depende de:", opts:["El sistema central","La masa del planeta","Nada"], ans:0, feedback: "La respuesta correcta es **El sistema central**. La constante $k$ en $T^2 = k \cdot a^3$ depende de la masa del cuerpo central (como el Sol en nuestro sistema solar)."},
+  {q:"Galileo nació en:", opts:["1564","1571","1642"], ans:0, feedback: "La respuesta correcta es **1564**. Nació en Pisa, Italia, en ese año."}
+];
 
 function initExam(){
   const form = document.getElementById('exam-form');
   const resultBox = document.getElementById('exam-result');
-  if (!form || !resultBox) return;
-
   form.innerHTML = "";
-  resultBox.innerHTML = ""; 
-  document.getElementById('btn-exam-submit').disabled = false; 
+  resultBox.textContent = "";
 
+  // Selección aleatoria de 10
   const pool = [...examQuestions];
-  chosenQuestions = []; 
-  while(chosenQuestions.length<10 && pool.length>0){
+  const chosen = [];
+  while(chosen.length<10){
     const i = Math.floor(Math.random()*pool.length);
-    chosenQuestions.push(pool.splice(i,1)[0]);
+    chosen.push(pool.splice(i,1)[0]);
   }
 
-  chosenQuestions.forEach((q,i)=>{
+  chosen.forEach((q,i)=>{
     const field = document.createElement('div');
     field.className="question";
     field.innerHTML = `<h4>${i+1}. ${q.q}</h4>` + 
@@ -536,104 +467,82 @@ function initExam(){
       ).join("<br>");
     form.appendChild(field);
   });
+
+  document.getElementById('btn-exam-submit').onclick = ()=>{
+    let score=0;
+    chosen.forEach((q,i)=>{
+      const marked = form.querySelector(`input[name=q${i}]:checked`);
+      const isCorrect = marked && parseInt(marked.value)===q.ans;
+
+      if(isCorrect) score++;
+      
+      const questionDiv = form.querySelector(`.question:nth-child(${i+1})`);
+      if(questionDiv) {
+        let prevFeedback = questionDiv.querySelector('.exam-feedback');
+        if (prevFeedback) prevFeedback.remove();
+
+        const fb = document.createElement('p');
+        fb.className = 'exam-feedback';
+        fb.style.marginTop = '.5rem';
+        fb.style.padding = '.5rem';
+        fb.style.borderRadius = '8px';
+        fb.style.border = isCorrect ? '1px solid var(--ok)' : '1px solid var(--warn)';
+        fb.style.background = isCorrect ? 'rgba(91, 228, 168, 0.1)' : 'rgba(255, 209, 102, 0.1)';
+        fb.style.color = isCorrect ? 'var(--ok)' : 'var(--warn)';
+        // Se añade la oración de feedback
+        fb.innerHTML = isCorrect ? `✅ ¡Correcto! Buen trabajo.` : `❌ Incorrecto. ${q.feedback}`;
+        questionDiv.appendChild(fb);
+      }
+    });
+    resultBox.textContent = `Tu puntuación: ${score}/10`;
+    resultBox.style.color = score>=6 ? "var(--ok)" : "var(--warn)";
+  };
+
+  document.getElementById('btn-exam-reset').onclick = initExam;
 }
 
-document.getElementById('btn-exam-submit').onclick = ()=>{
-  const form = document.getElementById('exam-form');
-  const resultBox = document.getElementById('exam-result');
-  if (!form || !resultBox) return;
-
-  let score=0;
-  let feedbackHTML = `<div class="feedback-list">`;
-  
-  chosenQuestions.forEach((q,i)=>{
-    const marked = form.querySelector(`input[name=q${i}]:checked`);
-    const isCorrect = marked && parseInt(marked.value) === q.ans;
-    const questionElement = form.querySelector(`.question:nth-child(${i+1})`);
-
-    questionElement.querySelectorAll('label').forEach(label => label.classList.remove('is-correct', 'is-incorrect'));
-
-    if (isCorrect) {
-      score++;
-      if (marked) marked.parentElement.classList.add('is-correct');
-    } else {
-      const userAnswerText = marked ? marked.parentElement.textContent.trim() : "No respondiste esta pregunta.";
-
-      feedbackHTML += `
-        <div class="feedback-item incorrect">
-          <p>❌ Pregunta ${i+1}: <strong>${q.q}</strong></p>
-          <p class="user-answer">Tu respuesta: <em>${userAnswerText}</em></p>
-          <p class="correct-explanation">💡 **Explicación Correcta:** ${q.feedback}</p>
-        </div>
-      `;
-      if (marked) marked.parentElement.classList.add('is-incorrect');
-      // Marcar la respuesta correcta en el formulario
-      const correctOption = questionElement.querySelector(`input[name=q${i}][value="${q.ans}"]`);
-      if (correctOption) {
-          correctOption.parentElement.classList.add('is-correct');
-      }
-    }
-  });
-
-  feedbackHTML += `</div>`; 
-  
-  const feedbackContent = score < chosenQuestions.length ? `
-    <p>A continuación se muestran las respuestas incorrectas y la corrección:</p>
-    ${feedbackHTML}` : '<p style="color:var(--ok);">¡Felicidades! Respondiste todas las preguntas correctamente. 🎉</p>';
-
-
-  resultBox.innerHTML = `
-    <h4 style="color: ${score >= 6 ? 'var(--ok)' : 'var(--warn)'};">
-      Puntuación final: ${score}/${chosenQuestions.length}
-    </h4>
-  ` + feedbackContent;
-  
-  document.getElementById('btn-exam-submit').disabled = true;
-};
-
+// iniciar examen al entrar a la pestaña
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
-document.getElementById('btn-exam-reset').onclick = initExam;
-
 
 // -------- Integración de IA con Gemini --------
+// 1. Añade los elementos HTML al DOM para que el código funcione
 const aiQuestionInput = document.getElementById('ai-question');
 const aiAnswerDiv = document.getElementById('ai-answer');
 const btnAiAsk = document.getElementById('btn-ai-ask');
 
-if(btnAiAsk) { 
-    btnAiAsk.addEventListener('click', async () => {
-    const question = aiQuestionInput.value.trim();
-    if (!question) {
-        aiAnswerDiv.textContent = 'Por favor, escribe una pregunta.';
-        return;
-    }
+// 2. Escucha el clic en el botón
+btnAiAsk.addEventListener('click', async () => {
+  const question = aiQuestionInput.value.trim();
+  if (!question) {
+    aiAnswerDiv.textContent = 'Por favor, escribe una pregunta.';
+    return;
+  }
 
-    aiAnswerDiv.textContent = 'Generando respuesta... ⏳';
-    btnAiAsk.disabled = true;
+  aiAnswerDiv.textContent = 'Generando respuesta... ⏳';
+  btnAiAsk.disabled = true;
 
-    try {
-        const serverlessUrl = window.location.origin + '/api/ask';
+  try {
+    const serverlessUrl = window.location.origin + '/api/ask';
 
-        const response = await fetch(serverlessUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: question }),
-        });
-
-        if (!response.ok) {
-        throw new Error('La IA no pudo responder. Inténtalo de nuevo más tarde.');
-        }
-
-        const data = await response.json();
-        aiAnswerDiv.textContent = data.answer || 'No se pudo obtener una respuesta.';
-
-    } catch (error) {
-        console.error('Error al comunicarse con la IA:', error);
-        aiAnswerDiv.textContent = 'Hubo un error al procesar tu pregunta. Por favor, revisa la consola para más detalles.';
-    } finally {
-        btnAiAsk.disabled = false;
-    }
+    const response = await fetch(serverlessUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: question }),
     });
-}
+
+    if (!response.ok) {
+      throw new Error('La IA no pudo responder. Inténtalo de nuevo más tarde.');
+    }
+
+    const data = await response.json();
+    aiAnswerDiv.textContent = data.answer || 'No se pudo obtener una respuesta.';
+
+  } catch (error) {
+    console.error('Error al comunicarse con la IA:', error);
+    aiAnswerDiv.textContent = 'Hubo un error al procesar tu pregunta. Por favor, revisa la consola para más detalles.';
+  } finally {
+    btnAiAsk.disabled = false;
+  }
+});
