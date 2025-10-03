@@ -26,6 +26,7 @@
   </header>
 
   <main id="app" class="app">
+    <!-- INICIO -->
     <section id="view-inicio" class="view active" aria-labelledby="tab-inicio">
       <div class="hero">
         <h1 class="title slide-up">Grandes mentes, grandes ideas</h1>
@@ -68,6 +69,7 @@
     </section>
  
 
+    <!-- FÓRMULAS -->
     <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
       <header class="view-header">
         <h2>Fórmulas y aplicaciones</h2>
@@ -121,6 +123,7 @@
       </div>
     </section>
 
+    <!-- LABORATORIO -->
     <section id="view-laboratorio" class="view" aria-labelledby="tab-laboratorio">
       <header class="view-header">
         <h2>Laboratorio interactivo</h2>
@@ -128,6 +131,7 @@
       </header>
 
       <div class="lab-grid">
+        <!-- Galileo Lab -->
         <section class="card lab reveal">
           <h3>Galileo: Tiro vertical / Caída libre</h3>
           <form id="form-galileo" class="controls">
@@ -150,16 +154,15 @@
           </form>
           <canvas id="canvas-galileo" width="640" height="360" aria-label="Simulación de movimiento"></canvas>
           <div class="readouts">
-            <div><strong>Tiempo actual:</strong> <span id="tcurrent">0.00</span> s</div>
-            <div><strong>Vel. actual:</strong> <span id="vcurrent">0.00</span> m/s</div>
-            <div><strong>Altura actual:</strong> <span id="ycurrent">0.00</span> m</div>
             <div><strong>Tiempo de vuelo:</strong> <span id="tvuelo">—</span> s</div>
             <div><strong>Altura máxima:</strong> <span id="hmax">—</span> m</div>
             <div><strong>Vel. impacto:</strong> <span id="vimpacto">—</span> m/s</div>
           </div>
           <p class="note"></p>
         </section>
+     
 
+        <!-- Kepler Lab -->
         <section class="card lab reveal">
           <h3>Kepler: 3ª ley (T² = k·a³)</h3>
           <form class="controls" id="form-kepler">
@@ -197,59 +200,46 @@
             <p class="note">La velocidad orbital se ajusta para mantener el período estimado.</p>
           </div>
         </section>
+       <!-- Caída libre de dos masas -->
+<section class="card lab reveal">
+  <h3>Caída Libre (distintas masas)</h3>
+  <div class="controls">
+    <label>Masa objeto 1 (kg)
+      <input type="number" id="masa1" value="5" step="0.1">
+    </label>
+    <label>Masa objeto 2 (kg)
+      <input type="number" id="masa2" value="50" step="0.1">
+    </label>
+  </div>
+  <div class="btns">
+    <button type="button" id="btn-caida" class="btn primary">Soltar</button>
+    <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-caida" width="320" height="240"></canvas>
+  <p class="note">Ambos caen igual, independientemente de la masa.</p>
+</section>
+
+<!-- Resistencia del aire -->
+<section class="card lab reveal">
+  <h3>Caída con resistencia del aire</h3>
+  <div class="controls">
+    <label>Masa bola (kg)
+      <input type="number" id="masaBola" value="5" step="0.1">
+    </label>
+    <label>Masa pluma (kg)
+      <input type="number" id="masaPluma" value="0.1" step="0.01">
+    </label>
+  </div>
+  <label><input type="checkbox" id="aireToggle"> Activar resistencia</label>
+  <div class="btns">
+    <button type="button" id="btn-aire" class="btn primary">Soltar</button>
+    <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-aire" width="320" height="240"></canvas>
+  <p class="note">Con aire: la pluma cae más lento. Sin aire: caen igual.</p>
+</section>
         
-        <section class="card lab reveal">
-          <h3>Caída Libre (distintas masas)</h3>
-          <div class="controls">
-            <label>Masa objeto 1 (kg)
-              <input type="number" id="masa1" value="5" step="0.1">
-            </label>
-            <label>Masa objeto 2 (kg)
-              <input type="number" id="masa2" value="50" step="0.1">
-            </label>
-          </div>
-          <div class="btns">
-            <button type="button" id="btn-caida" class="btn primary">Soltar</button>
-            <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
-          </div>
-          <canvas id="canvas-caida" width="320" height="240"></canvas>
-          <div class="readouts">
-            <div><strong>Tiempo:</strong> <span id="tcaida">0.00</span> s</div>
-            <div><strong>Vel. Objeto 1:</strong> <span id="vcaida1">0.00</span> m/s</div>
-            <div><strong>Altura Objeto 1:</strong> <span id="ycaida1">0.00</span> m</div>
-            <div><strong>Vel. Objeto 2:</strong> <span id="vcaida2">0.00</span> m/s</div>
-            <div><strong>Altura Objeto 2:</strong> <span id="ycaida2">0.00</span> m</div>
-          </div>
-          <p class="note">Ambos caen igual, independientemente de la masa.</p>
-        </section>
-
-        <section class="card lab reveal">
-          <h3>Caída con resistencia del aire</h3>
-          <div class="controls">
-            <label>Masa bola (kg)
-              <input type="number" id="masaBola" value="5" step="0.1">
-            </label>
-            <label>Masa pluma (kg)
-              <input type="number" id="masaPluma" value="0.1" step="0.01">
-            </label>
-          </div>
-          <label><input type="checkbox" id="aireToggle"> Activar resistencia</label>
-          <div class="btns">
-            <button type="button" id="btn-aire" class="btn primary">Soltar</button>
-            <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
-          </div>
-          <canvas id="canvas-aire" width="320" height="240"></canvas>
-          <div class="readouts">
-            <div><strong>Tiempo:</strong> <span id="taire">0.00</span> s</div>
-            <div><strong>Vel. Bola:</strong> <span id="vaire1">0.00</span> m/s</div>
-            <div><strong>Altura Bola:</strong> <span id="yaire1">0.00</span> m</div>
-            <div><strong>Vel. Pluma:</strong> <span id="vaire2">0.00</span> m/s</div>
-            <div><strong>Altura Pluma:</strong> <span id="yaire2">0.00</span> m</div>
-          </div>
-          <p class="note">Con aire: la pluma cae más lento. Sin aire: caen igual.</p>
-        </section>
-
-<section class="card lab reveal full-width-lab">
+        <section class="card lab reveal full-width-lab" width="100%">
             <h3>Kepler: Simulador Phet (Órbitas Reales)</h3>
             <p>Utiliza este simulador interactivo para visualizar las tres leyes del movimiento planetario.</p>
             <div class="iframe-wrap">
@@ -260,10 +250,10 @@
                 </iframe>
             </div>
         </section>
-
       </div>
     </section>
-    <section id="view-examen" class="view" aria-labelledby="tab-examen">
+    <!-- EXAMEN -->
+<section id="view-examen" class="view" aria-labelledby="tab-examen">
   <header class="view-header">
     <h2>Examen de Galileo & Kepler</h2>
     <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
@@ -271,7 +261,8 @@
 
   <div id="exam-container" class="exam-container card reveal">
     <form id="exam-form" class="controls exam-form">
-      </form>
+      <!-- Las preguntas se insertan dinámicamente con JS -->
+    </form>
     <div class="btns">
       <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
       <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
@@ -283,25 +274,41 @@
     
   </main>
 
+  <!-- Modal biografías -->
   <dialog id="bio-modal" aria-labelledby="bio-title" class="bio-modal">
     <form method="dialog" class="modal-card">
       <header class="modal-head">
         <h3 id="bio-title">Título</h3>
-        <button class="icon-btn" value="cancel" aria-label="Cerrar">✕</button>
+        <button class="icon-btn" value="cancel" aria-label="Cerrar modal">X</button>
       </header>
-      <article id="bio-content" class="modal-body"></article>
-      <footer class="modal-foot">
-        <button class="btn soft" value="cancel">Cerrar</button>
+
+      <div id="bio-content" class="modal-body bio-content">
+        <div id="bio-slides-container" class="bio-slides-container">
+          </div>
+      </div>
+      
+      <footer class="slider-nav">
+          <button type="button" id="prev-slide" disabled>← Anterior</button>
+          <div id="slide-counter"></div>
+          <button type="button" id="next-slide">Siguiente →</button>
       </footer>
-    </form>
+      </form>
   </dialog>
 
-  <footer class="site-footer">
-   
-  </footer>
+  </main>
 
   <script src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 
