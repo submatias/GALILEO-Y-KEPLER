@@ -20,7 +20,6 @@ function activate(route){
   moveInk();
   window.location.hash = route;
   
-  // *** CORRECCIÓN: Llamar a la animación del texto al activar la pestaña de Inicio ***
   if (route === 'inicio') {
       animateHeroText();
   }
@@ -53,10 +52,8 @@ document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
 // -------- Animación inicial del texto principal (Slider) --------
 function animateHeroText() {
-    // Activa la animación del título (slide-up)
     document.querySelector('.title.slide-up')?.classList.add('in');
     
-    // Con un pequeño retraso, activa la animación del subtítulo (fade-in)
     setTimeout(() => {
         document.querySelector('.subtitle.fade-in')?.classList.add('in');
     }, 200); 
@@ -68,16 +65,19 @@ const bios = {
     titulo: "Galileo Galilei (1564–1642)",
     texto: `
     Físico, astrónomo y matemático italiano, figura clave de la revolución científica.
+
     Perfeccionó el telescopio y realizó observaciones como las lunas de Júpiter y las fases de Venus, apoyando el heliocentrismo.
-    Estudió la caída de los cuerpos y formalizó las leyes del movimiento uniformemente acelerado. Defendió el método experimental
-    y la matematización de la naturaleza, sentando bases para la física clásica.`
+
+    Estudió la caída de los cuerpos y formalizó las leyes del movimiento uniformemente acelerado. Defendió el método experimental y la matematización de la naturaleza, sentando bases para la física clásica.`
   },
   kepler: {
     titulo: "Johannes Kepler (1571–1630)",
     texto: `
-    Astrónomo y matemático alemán, formuló las tres leyes del movimiento planetario a partir de los datos de Tycho Brahe,
-    describiendo órbitas elípticas, áreas iguales en tiempos iguales y la relación entre período y tamaño de la órbita.
-    Sus leyes fueron esenciales para la gravitación universal de Newton y el desarrollo de la mecánica celeste.`
+    Astrónomo y matemático alemán, formuló las tres leyes del movimiento planetario a partir de los datos de Tycho Brahe.
+
+    Sus leyes describen órbitas elípticas, áreas iguales en tiempos iguales y la relación entre período y tamaño de la órbita (T² ∝ a³).
+
+    Las leyes de Kepler fueron esenciales para la formulación de la gravitación universal por Isaac Newton y el desarrollo de la mecánica celeste.`
   }
 };
 
@@ -90,7 +90,15 @@ document.querySelectorAll('.portrait').forEach(card=>{
   function openBio(){
     const b = bios[who];
     bioTitle.textContent = b.titulo;
-    bioContent.innerHTML = `<p>${b.texto}</p>`;
+    
+    // *** CORRECCIÓN 1: Formatear el texto de la biografía en párrafos separados ***
+    const paragraphs = b.texto.split('\n')
+      .map(p => p.trim())
+      .filter(p => p.length > 0)
+      .map(p => `<p>${p}</p>`)
+      .join('');
+      
+    bioContent.innerHTML = paragraphs;
     modal.showModal();
   }
   card.addEventListener('click', openBio);
@@ -105,7 +113,6 @@ const ctx = canvas ? canvas.getContext('2d') : null;
 let animId = null, t = 0, dragging = false, dragBias = 0;
 
 function phys(t, g, v0, h0){
-  // s = h0 + v0*t - 1/2 g t^2 (eje vertical hacia arriba)
   const y = h0 + v0*t - 0.5*g*t*t;
   const v = v0 - g*t;
   return { y, v };
@@ -119,13 +126,11 @@ if (canvas) {
     const v0 = parseFloat(v0Input.value) || 0;
     const h0 = parseFloat(h0Input.value) || 0;
 
-    // tiempos clave
     const tSube = v0 / g; 
     const hMax = h0 + v0*tSube - 0.5*g*tSube*tSube;
     const disc = (v0*v0) + 2*g*h0; 
     const tVuelo = (v0 + Math.sqrt(disc))/g; 
 
-    // mostrar lecturas
     $('tvuelo').textContent = (tVuelo || 0).toFixed(2);
     $('hmax').textContent = (hMax || 0).toFixed(2);
     const vImpacto = Math.sqrt(Math.max(0, v0*v0 + 2*g*Math.max(0, hMax))); 
@@ -139,17 +144,14 @@ if (canvas) {
       const { y, v } = phys(t, g, v0, h0);
       const yPx = groundY - (y * pxPerM) - dragBias;
 
-      // clear
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      // ground
       ctx.strokeStyle = 'rgba(255,255,255,.25)';
       ctx.beginPath();
       ctx.moveTo(0, groundY+0.5);
       ctx.lineTo(canvas.width, groundY+0.5);
       ctx.stroke();
 
-      // trajectory trail
       ctx.beginPath();
       ctx.moveTo(40, groundY - (h0*pxPerM) - dragBias);
       const steps = Math.floor(Math.max(t, tVuelo)*60);
@@ -164,20 +166,17 @@ if (canvas) {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // projectile
       const x = 40 + t * (canvas.width - 100)/Math.max(tVuelo, 1);
       ctx.beginPath();
       ctx.arc(x, yPx, 8, 0, Math.PI*2);
       ctx.fillStyle = '#5be4a8';
       ctx.fill();
 
-      // labels
       ctx.fillStyle = 'rgba(255,255,255,.7)';
       ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto';
       ctx.fillText(`t = ${t.toFixed(2)} s`, 20, 24);
       ctx.fillText(`y = ${Math.max(0,y).toFixed(2)} m`, 20, 44);
 
-      // Update current readouts
       $('tcurrent').textContent = t.toFixed(2);
       $('vcurrent').textContent = Math.abs(v).toFixed(2);
       $('ycurrent').textContent = Math.max(0,y).toFixed(2);
@@ -195,7 +194,6 @@ if (canvas) {
     cancelAnimationFrame(animId);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     $('tvuelo').textContent = $('hmax').textContent = $('vimpacto').textContent = '—';
-    // Reset current readouts
     $('tcurrent').textContent = $('vcurrent').textContent = $('ycurrent').textContent = '0.00';
     t = 0; dragBias = 0;
   });
@@ -214,7 +212,6 @@ const outT = $('T'), outT2 = $('T2'), outA3 = $('a3');
 const planet = document.getElementById('planet');
 const ellipse = document.getElementById('ellipse');
 
-// Bloque de seguridad CRÍTICO para Kepler
 if (aRange && planet && ellipse) {
   function updateKeplerUI(){
     const a = parseFloat(aRange.value);
@@ -302,26 +299,22 @@ if (caidaCanvas) {
       
       ctxCaida.clearRect(0,0,caidaCanvas.width,caidaCanvas.height);
       
-      // Dibujar suelo
       ctxCaida.strokeStyle = 'rgba(255,255,255,.25)';
       ctxCaida.beginPath();
       ctxCaida.moveTo(0, GROUND_Y);
       ctxCaida.lineTo(caidaCanvas.width, GROUND_Y);
       ctxCaida.stroke();
       
-      // Objeto 1
       ctxCaida.fillStyle = "#7c89ff";
       ctxCaida.beginPath(); 
       ctxCaida.arc(100,yPx1,10+Math.log(m1+1)*5,0,2*Math.PI); 
       ctxCaida.fill();
       
-      // Objeto 2
       ctxCaida.fillStyle = "#ffd166";
       ctxCaida.beginPath(); 
       ctxCaida.arc(200,yPx2,10+Math.log(m2+1)*5,0,2*Math.PI); 
       ctxCaida.fill();
       
-      // Actualizar readouts
       $("tcaida").textContent = tCaida.toFixed(2);
       $("vcaida1").textContent = vSim1.toFixed(2);
       $("ycaida1").textContent = ySim1.toFixed(2);
@@ -398,26 +391,22 @@ if (aireCanvas) {
 
       ctxAire.clearRect(0,0,aireCanvas.width,aireCanvas.height);
       
-      // Dibujar suelo
       ctxAire.strokeStyle = 'rgba(255,255,255,.25)';
       ctxAire.beginPath();
       ctxAire.moveTo(0, GROUND_Y);
       ctxAire.lineTo(aireCanvas.width, GROUND_Y);
       ctxAire.stroke();
 
-      // Bola
       ctxAire.fillStyle = "#5be4a8";
       ctxAire.beginPath(); 
       ctxAire.arc(100,yPx1,10+Math.log(mBola+1)*5,0,2*Math.PI); 
       ctxAire.fill();
 
-      // Pluma
       ctxAire.fillStyle = "#e66";
       ctxAire.beginPath(); 
       ctxAire.arc(200,yPx2,10+Math.log(mPluma+1)*5,0,2*Math.PI); 
       ctxAire.fill();
       
-      // Actualizar readouts
       $("taire").textContent = tAire.toFixed(2);
       $("vaire1").textContent = vSim1.toFixed(2);
       $("yaire1").textContent = ySim1.toFixed(2);
@@ -500,13 +489,12 @@ if (grafCanvas) {
 }
 
 // -------- UX niceties --------
-function initInkOnce(){ moveInk(); animateHeroText(); } // *** MODIFICADO AQUI ***
-window.addEventListener('load', initInkOnce); // *** MODIFICADO AQUI ***
+function initInkOnce(){ moveInk(); animateHeroText(); } 
+window.addEventListener('load', initInkOnce); 
 window.addEventListener('resize', ()=> {
   moveInk();
 });
 
-// -------- Accesibilidad: cerrar modal con ESC --------
 if(modal) { 
   modal.addEventListener('cancel', (e)=> { e.preventDefault(); modal.close(); });
 }
@@ -536,20 +524,24 @@ const examQuestions = [
   {q:"Galileo nació en:", opts:["1564","1571","1642"], ans:0}
 ];
 
+let chosenQuestions = []; // Array global para las 10 preguntas seleccionadas
+
 function initExam(){
   const form = document.getElementById('exam-form');
   const resultBox = document.getElementById('exam-result');
   form.innerHTML = "";
-  resultBox.textContent = "";
+  resultBox.innerHTML = ""; // Limpiar resultados anteriores
+  document.getElementById('btn-exam-submit').disabled = false; // Habilitar el botón de envío
 
+  // Selección aleatoria de 10
   const pool = [...examQuestions];
-  const chosen = [];
-  while(chosen.length<10){
+  chosenQuestions = []; // Reiniciar las preguntas elegidas
+  while(chosenQuestions.length<10){
     const i = Math.floor(Math.random()*pool.length);
-    chosen.push(pool.splice(i,1)[0]);
+    chosenQuestions.push(pool.splice(i,1)[0]);
   }
 
-  chosen.forEach((q,i)=>{
+  chosenQuestions.forEach((q,i)=>{
     const field = document.createElement('div');
     field.className="question";
     field.innerHTML = `<h4>${i+1}. ${q.q}</h4>` + 
@@ -558,21 +550,61 @@ function initExam(){
       ).join("<br>");
     form.appendChild(field);
   });
-
-  document.getElementById('btn-exam-submit').onclick = ()=>{
-    let score=0;
-    chosen.forEach((q,i)=>{
-      const marked = form.querySelector(`input[name=q${i}]:checked`);
-      if(marked && parseInt(marked.value)===q.ans) score++;
-    });
-    resultBox.textContent = `Tu puntuación: ${score}/10`;
-    resultBox.style.color = score>=6 ? "var(--ok)" : "var(--warn)";
-  };
-
-  document.getElementById('btn-exam-reset').onclick = initExam;
 }
 
+// *** CORRECCIÓN 2: Lógica de corrección detallada para el examen ***
+document.getElementById('btn-exam-submit').onclick = ()=>{
+  const form = document.getElementById('exam-form');
+  const resultBox = document.getElementById('exam-result');
+  let score=0;
+  let feedbackHTML = `<div class="feedback-list">`;
+  
+  chosenQuestions.forEach((q,i)=>{
+    const marked = form.querySelector(`input[name=q${i}]:checked`);
+    const isCorrect = marked && parseInt(marked.value) === q.ans;
+    const questionElement = form.querySelector(`.question:nth-child(${i+1})`);
+
+    // Limpiar clases de corrección anteriores
+    questionElement.querySelectorAll('label').forEach(label => label.classList.remove('is-correct', 'is-incorrect'));
+
+    if (isCorrect) {
+      score++;
+      // Marcar la respuesta del usuario (correcta) en verde
+      if (marked) marked.parentElement.classList.add('is-correct');
+    } else {
+      // Si está mal, generar el feedback detallado
+      const correctAnswerText = q.opts[q.ans];
+      const userAnswerText = marked ? marked.parentElement.textContent.trim() : "No respondida";
+
+      feedbackHTML += `
+        <div class="feedback-item incorrect">
+          <p>❌ Pregunta ${i+1}: <strong>${q.q}</strong></p>
+          <p class="user-answer">Tu respuesta: <em>${userAnswerText}</em></p>
+          <p class="correct-answer">✅ **Respuesta correcta:** ${correctAnswerText}</p>
+        </div>
+      `;
+      // Marcar la respuesta del usuario en rojo (si respondió)
+      if (marked) marked.parentElement.classList.add('is-incorrect');
+      // Marcar la respuesta correcta en verde
+      questionElement.querySelector(`input[name=q${i}][value="${q.ans}"]`).parentElement.classList.add('is-correct');
+    }
+  });
+
+  feedbackHTML += `</div>`; // Cierre de feedback-list
+  
+  resultBox.innerHTML = `
+    <h4 style="color: ${score >= 6 ? 'var(--ok)' : 'var(--warn)'};">
+      Puntuación final: ${score}/10
+    </h4>
+    <p>A continuación se muestran las respuestas incorrectas y la corrección:</p>
+  ` + feedbackHTML;
+  
+  document.getElementById('btn-exam-submit').disabled = true;
+};
+
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
+document.getElementById('btn-exam-reset').onclick = initExam; // Asegurar que el reset funcione después de la corrección.
+
 
 // -------- Integración de IA con Gemini --------
 const aiQuestionInput = document.getElementById('ai-question');
