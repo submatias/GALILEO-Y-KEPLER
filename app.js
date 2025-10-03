@@ -91,7 +91,7 @@ document.querySelectorAll('.portrait').forEach(card=>{
     const b = bios[who];
     bioTitle.textContent = b.titulo;
     
-    // *** CORRECCIÓN 1: Formatear el texto de la biografía en párrafos separados ***
+    // CORRECCIÓN 1: Se divide el texto en párrafos. El CSS los posicionará para el scroll horizontal.
     const paragraphs = b.texto.split('\n')
       .map(p => p.trim())
       .filter(p => p.length > 0)
@@ -502,40 +502,40 @@ if(modal) {
 
 // -------- EXAMEN --------
 const examQuestions = [
-  {q:"¿Qué demostró Galileo con la caída de los cuerpos?", opts:["Que los más pesados caen más rápido","Que todos caen con la misma aceleración","Que depende del viento"], ans:1},
-  {q:"¿Qué instrumento perfeccionó Galileo?", opts:["Microscopio","Telescopio","Barómetro"], ans:1},
-  {q:"¿Qué descubrió Galileo en Júpiter?", opts:["Anillos","Lunas","Nubes"], ans:1},
-  {q:"¿Qué estudió Galileo en los planos inclinados?", opts:["El movimiento uniformemente acelerado","La gravitación universal","La electricidad"], ans:0},
-  {q:"¿Qué defendía Galileo sobre el conocimiento?", opts:["El método experimental","La autoridad de Aristóteles","La magia"], ans:0},
-  {q:"¿Qué forma tienen las órbitas planetarias según Kepler?", opts:["Circulares","Elípticas","Rectangulares"], ans:1},
-  {q:"La 2ª ley de Kepler dice:", opts:["Velocidad constante en toda la órbita","Áreas iguales en tiempos iguales","Planetas inmóviles"], ans:1},
-  {q:"La 3ª ley de Kepler relaciona:", opts:["Periodo y radio","Tiempo y masa","Periodo y semieje mayor"], ans:2},
-  {q:"¿Quién proporcionó a Kepler los datos para sus leyes?", opts:["Newton","Copérnico","Tycho Brahe"], ans:2},
-  {q:"¿Qué descubrió Kepler sobre Marte?", opts:["Que su órbita es elíptica","Que no gira","Que tiene anillos"], ans:0},
-  {q:"¿Qué representa 'g' en la física de Galileo?", opts:["Gravedad","Gas","Galaxia"], ans:0},
-  {q:"¿Qué observó Galileo en Venus?", opts:["Manchas","Fases","Nubes"], ans:1},
-  {q:"¿Qué implican las fases de Venus?", opts:["Prueba del heliocentrismo","Prueba del geocentrismo","Prueba de que Venus no existe"], ans:0},
-  {q:"¿Qué midió Galileo con el péndulo?", opts:["El tiempo","La distancia","La velocidad de la luz"], ans:0},
-  {q:"¿Qué ley explica la variación de velocidad en la órbita?", opts:["1ª","2ª","3ª"], ans:1},
-  {q:"Kepler era originario de:", opts:["Italia","Alemania","Francia"], ans:1},
-  {q:"¿Qué descubrió Galileo en el Sol?", opts:["Manchas solares","Eclipses","Auroras"], ans:0},
-  {q:"¿Qué descubrió Galileo en la Luna?", opts:["Que es lisa","Que tiene montañas y cráteres","Que brilla sola"], ans:1},
-  {q:"La constante k en la 3ª ley depende de:", opts:["El sistema central","La masa del planeta","Nada"], ans:0},
-  {q:"Galileo nació en:", opts:["1564","1571","1642"], ans:0}
+  // Nueva estructura: {q: pregunta, opts: [opciones], ans: índice, feedback: oración explicativa}
+  {q:"¿Qué demostró Galileo con la caída de los cuerpos?", opts:["Que los más pesados caen más rápido","Que todos caen con la misma aceleración","Que depende del viento"], ans:1, feedback: "Galileo demostró que **todos los cuerpos caen con la misma aceleración** independientemente de su masa, si se ignora la resistencia del aire."},
+  {q:"¿Qué instrumento perfeccionó Galileo?", opts:["Microscopio","Telescopio","Barómetro"], ans:1, feedback: "Galileo perfeccionó el **telescopio**, lo que le permitió hacer observaciones astronómicas cruciales."},
+  {q:"¿Qué descubrió Galileo en Júpiter?", opts:["Anillos","Lunas","Nubes"], ans:1, feedback: "Descubrió las cuatro **lunas** más grandes de Júpiter (Io, Europa, Ganímedes y Calisto), que contradecían el modelo geocéntrico."},
+  {q:"¿Qué estudió Galileo en los planos inclinados?", opts:["El movimiento uniformemente acelerado","La gravitación universal","La electricidad"], ans:0, feedback: "Los planos inclinados le permitieron estudiar y medir con precisión el **movimiento uniformemente acelerado**."},
+  {q:"¿Qué defendía Galileo sobre el conocimiento?", opts:["El método experimental","La autoridad de Aristóteles","La magia"], ans:0, feedback: "Galileo fue un defensor clave del **método experimental**, basando la ciencia en la observación y la medición."},
+  {q:"¿Qué forma tienen las órbitas planetarias según Kepler?", opts:["Circulares","Elípticas","Rectangulares"], ans:1, feedback: "La **primera ley de Kepler** establece que los planetas se mueven en órbitas **elípticas**, con el Sol en uno de sus focos."},
+  {q:"La 2ª ley de Kepler dice:", opts:["Velocidad constante en toda la órbita","Áreas iguales en tiempos iguales","Planetas inmóviles"], ans:1, feedback: "La **segunda ley de Kepler** afirma que un planeta barre **áreas iguales en tiempos iguales**, lo que implica que la velocidad varía en la órbita."},
+  {q:"La 3ª ley de Kepler relaciona:", opts:["Periodo y radio","Tiempo y masa","Periodo y semieje mayor"], ans:2, feedback: "La **tercera ley de Kepler** relaciona el **periodo (T)** de la órbita con el **semieje mayor (a)**, mediante la fórmula T² ∝ a³."},
+  {q:"¿Quién proporcionó a Kepler los datos para sus leyes?", opts:["Newton","Copérnico","Tycho Brahe"], ans:2, feedback: "Kepler heredó y analizó los detallados datos de observación de su mentor, el astrónomo **Tycho Brahe**."},
+  {q:"¿Qué descubrió Kepler sobre Marte?", opts:["Que su órbita es elíptica","Que no gira","Que tiene anillos"], ans:0, feedback: "El estudio de la órbita de Marte fue crucial para que Kepler dedujera que las órbitas son **elípticas**."},
+  {q:"¿Qué representa 'g' en la física de Galileo?", opts:["Gravedad","Gas","Galaxia"], ans:0, feedback: "La 'g' representa la aceleración debida a la **gravedad** terrestre (aproximadamente 9.8 m/s²)."},
+  {q:"¿Qué observó Galileo en Venus?", opts:["Manchas","Fases","Nubes"], ans:1, feedback: "Galileo observó las **fases** de Venus, similares a las de la Luna."},
+  {q:"¿Qué implican las fases de Venus?", opts:["Prueba del heliocentrismo","Prueba del geocentrismo","Prueba de que Venus no existe"], ans:0, feedback: "Las fases completas de Venus solo pueden ocurrir si **Venus orbita el Sol**, lo que fue una prueba clave para el heliocentrismo."},
+  {q:"¿Qué midió Galileo con el péndulo?", opts:["El tiempo","La distancia","La velocidad de la luz"], ans:0, feedback: "Galileo utilizó su estudio del péndulo para medir y estandarizar el **tiempo** en sus experimentos de movimiento."},
+  {q:"¿Qué ley explica la variación de velocidad en la órbita?", opts:["1ª","2ª","3ª"], ans:1, feedback: "La **segunda ley de Kepler** explica que el planeta va más rápido cerca del Sol y más lento lejos de él."},
+  {q:"Kepler era originario de:", opts:["Italia","Alemania","Francia"], ans:1, feedback: "Johannes Kepler fue un astrónomo y matemático de **Alemania**."},
+  {q:"¿Qué descubrió Galileo en el Sol?", opts:["Manchas solares","Eclipses","Auroras"], ans:0, feedback: "Galileo observó las **manchas solares**, sugiriendo que el Sol no era una esfera perfecta e inmutable."},
+  {q:"¿Qué descubrió Galileo en la Luna?", opts:["Que es lisa","Que tiene montañas y cráteres","Que brilla sola"], ans:1, feedback: "Galileo descubrió que la Luna tiene una superficie irregular con **montañas y cráteres**, haciéndola similar a la Tierra."},
+  {q:"La constante k en la 3ª ley depende de:", opts:["El sistema central","La masa del planeta","Nada"], ans:0, feedback: "La constante 'k' de la tercera ley (T² = k·a³) depende únicamente de la masa del cuerpo central, es decir, del **sistema central** (como el Sol)."},
+  {q:"Galileo nació en:", opts:["1564","1571","1642"], ans:0, feedback: "Galileo Galilei nació en Pisa, Italia, en el año **1564**."}
 ];
 
-let chosenQuestions = []; // Array global para las 10 preguntas seleccionadas
+let chosenQuestions = []; 
 
 function initExam(){
   const form = document.getElementById('exam-form');
   const resultBox = document.getElementById('exam-result');
   form.innerHTML = "";
-  resultBox.innerHTML = ""; // Limpiar resultados anteriores
-  document.getElementById('btn-exam-submit').disabled = false; // Habilitar el botón de envío
+  resultBox.innerHTML = ""; 
+  document.getElementById('btn-exam-submit').disabled = false; 
 
-  // Selección aleatoria de 10
   const pool = [...examQuestions];
-  chosenQuestions = []; // Reiniciar las preguntas elegidas
+  chosenQuestions = []; 
   while(chosenQuestions.length<10){
     const i = Math.floor(Math.random()*pool.length);
     chosenQuestions.push(pool.splice(i,1)[0]);
@@ -552,7 +552,6 @@ function initExam(){
   });
 }
 
-// *** CORRECCIÓN 2: Lógica de corrección detallada para el examen ***
 document.getElementById('btn-exam-submit').onclick = ()=>{
   const form = document.getElementById('exam-form');
   const resultBox = document.getElementById('exam-result');
@@ -564,46 +563,45 @@ document.getElementById('btn-exam-submit').onclick = ()=>{
     const isCorrect = marked && parseInt(marked.value) === q.ans;
     const questionElement = form.querySelector(`.question:nth-child(${i+1})`);
 
-    // Limpiar clases de corrección anteriores
     questionElement.querySelectorAll('label').forEach(label => label.classList.remove('is-correct', 'is-incorrect'));
 
     if (isCorrect) {
       score++;
-      // Marcar la respuesta del usuario (correcta) en verde
       if (marked) marked.parentElement.classList.add('is-correct');
     } else {
-      // Si está mal, generar el feedback detallado
-      const correctAnswerText = q.opts[q.ans];
-      const userAnswerText = marked ? marked.parentElement.textContent.trim() : "No respondida";
+      // CORRECCIÓN 2: Se utiliza el nuevo campo 'feedback'
+      const userAnswerText = marked ? marked.parentElement.textContent.trim() : "No respondiste esta pregunta.";
 
       feedbackHTML += `
         <div class="feedback-item incorrect">
           <p>❌ Pregunta ${i+1}: <strong>${q.q}</strong></p>
           <p class="user-answer">Tu respuesta: <em>${userAnswerText}</em></p>
-          <p class="correct-answer">✅ **Respuesta correcta:** ${correctAnswerText}</p>
+          <p class="correct-explanation">💡 **Explicación Correcta:** ${q.feedback}</p>
         </div>
       `;
-      // Marcar la respuesta del usuario en rojo (si respondió)
       if (marked) marked.parentElement.classList.add('is-incorrect');
-      // Marcar la respuesta correcta en verde
       questionElement.querySelector(`input[name=q${i}][value="${q.ans}"]`).parentElement.classList.add('is-correct');
     }
   });
 
-  feedbackHTML += `</div>`; // Cierre de feedback-list
+  feedbackHTML += `</div>`; 
   
+  const feedbackContent = score < chosenQuestions.length ? `
+    <p>A continuación se muestran las respuestas incorrectas y la corrección:</p>
+    ${feedbackHTML}` : '<p style="color:var(--ok);">¡Felicidades! Respondiste todas las preguntas correctamente. 🎉</p>';
+
+
   resultBox.innerHTML = `
     <h4 style="color: ${score >= 6 ? 'var(--ok)' : 'var(--warn)'};">
       Puntuación final: ${score}/10
     </h4>
-    <p>A continuación se muestran las respuestas incorrectas y la corrección:</p>
-  ` + feedbackHTML;
+  ` + feedbackContent;
   
   document.getElementById('btn-exam-submit').disabled = true;
 };
 
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
-document.getElementById('btn-exam-reset').onclick = initExam; // Asegurar que el reset funcione después de la corrección.
+document.getElementById('btn-exam-reset').onclick = initExam;
 
 
 // -------- Integración de IA con Gemini --------
