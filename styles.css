@@ -337,6 +337,120 @@ html,body{
     width: 100%;
     min-height: 400px;
 }
+/* ... (Todo el CSS anterior) ... */
+
+/* --- Modal Biografías --- */
+.bio-modal::backdrop{background:rgba(0,0,0,.6)}
+.modal-card{
+  width:min(800px, 92vw); border:1px solid #ffffff26; border-radius:16px; padding:0; overflow:hidden; background: var(--bg-soft);
+  box-shadow: var(--shadow);
+}
+.modal-head, .modal-foot{padding:.8rem 1rem; display:flex; align-items:center; justify-content:space-between; background:#ffffff08}
+.modal-head h3{margin:0}
+.icon-btn{background:transparent; border:0; color:#fff; font-size:1.1rem; cursor:pointer}
+
+/* *** CORRECCIÓN 1: Estilos para el deslizamiento horizontal de la biografía *** */
+.modal-body{
+  padding: 1rem; 
+  color: #eaeaff;
+  overflow-x: scroll; /* Habilitar el scroll horizontal */
+  overflow-y: hidden; /* Ocultar el scroll vertical, si es posible */
+  white-space: nowrap; /* Evitar que los párrafos se envuelvan */
+  -webkit-overflow-scrolling: touch; /* Scroll más suave en iOS */
+}
+/* Estilo para los párrafos dentro del cuerpo del modal */
+.modal-body p {
+  display: inline-block; /* Mostrar los párrafos uno al lado del otro */
+  vertical-align: top;
+  white-space: normal; /* Permitir que el texto dentro del párrafo se envuelva normalmente */
+  width: calc(min(800px, 92vw) - 2rem); /* Ancho de un párrafo = Ancho del modal - padding */
+  padding-right: 2rem; /* Separación entre "diapositivas" (párrafos) */
+  box-sizing: border-box;
+}
+/* Ocultar la barra de desplazamiento horizontal por defecto (opcional, pero mejora la estética de "slider") */
+.modal-body::-webkit-scrollbar {
+    height: 6px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: #ffffff33;
+    border-radius: 3px;
+}
+
+
+/* --- Estilos para la corrección del examen --- */
+
+/* Contenedor general de la corrección */
+.exam-result {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ffffff1a;
+}
+.exam-result h4 {
+  font-size: 1.6rem;
+}
+.exam-result p {
+  color: var(--muted);
+}
+
+
+/* Lista de errores */
+.feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Ítem de feedback incorrecto */
+.feedback-item {
+    padding: 1rem;
+    background: #ff00001a; 
+    border-left: 5px solid var(--warn);
+    border-radius: 8px;
+    color: var(--text);
+}
+
+.feedback-item p {
+    margin: 0.2rem 0;
+}
+
+.feedback-item .user-answer {
+    color: #ff5555; 
+    font-style: italic;
+}
+
+/* Estilo para la nueva oración de explicación (el feedback) */
+.feedback-item .correct-explanation {
+    color: var(--ok); 
+    font-weight: 500;
+}
+.feedback-item .correct-explanation strong {
+  font-weight: 700;
+}
+
+/* Resaltar la opción marcada en el formulario */
+
+/* Estilo para las opciones incorrectas seleccionadas por el usuario */
+.exam-form .question label.is-incorrect {
+    background: #ff555533; 
+    border-radius: 4px;
+    padding: 0 4px;
+    color: #ff5555; 
+    font-weight: 500;
+}
+
+/* Estilo para las opciones correctas */
+.exam-form .question label.is-correct {
+    background: #5be4a833; 
+    border: 1px solid var(--ok);
+    border-radius: 4px;
+    padding: 0 4px;
+    color: var(--ok); 
+    font-weight: 600;
+}
+
+/* ... (Todo el CSS de media queries y el final) ... */
+
 
 
 
