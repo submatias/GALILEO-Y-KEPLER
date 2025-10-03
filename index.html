@@ -26,6 +26,7 @@
   </header>
 
   <main id="app" class="app">
+    <!-- INICIO -->
     <section id="view-inicio" class="view active" aria-labelledby="tab-inicio">
       <div class="hero">
         <h1 class="title slide-up">Grandes mentes, grandes ideas</h1>
@@ -68,6 +69,7 @@
     </section>
  
 
+    <!-- FÓRMULAS -->
     <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
       <header class="view-header">
         <h2>Fórmulas y aplicaciones</h2>
@@ -105,161 +107,174 @@
               <small>Implica que el planeta va más rápido cerca del perihelio.</small>
             </li>
             <li>
-              <div><strong>3ª Ley (Períodos)</strong>: <code>T² ∝ a³</code></div>
-              <small>El cuadrado del periodo orbital (T) es proporcional al cubo del semieje mayor (a).</small>
+              <div><strong>3ª Ley (Períodos)</strong>:
+                <code>T² ∝ a³</code> &nbsp; (para un mismo sistema: <code>T² = k·a³</code>).
+              </div>
+              <small>Relaciona el período orbital <code>T</code> con el semieje mayor <code>a</code>.</small>
             </li>
           </ol>
-          <p class="use">Uso típico: calcular la distancia o el periodo de planetas, cometas y satélites.</p>
+          <p class="use">Uso típico: estimar períodos orbitales y comparar órbitas en sistemas planetarios.</p>
         </article>
-        <section class="tip reveal" style="margin-top: 1rem;">
-          <p>💡 **Dato Curioso**: La 3ª Ley de Kepler fue clave para que Isaac Newton desarrollara su Ley de Gravitación Universal.</p>
-        </section>
+
+        <article class="card tip reveal">
+          <h3>Tip rápido</h3>
+          <p>En unidades astronómicas (UA) y años alrededor del Sol, <code>k ≈ 1</code>, por lo que <code>T² ≈ a³</code>.</p>
+        </article>
       </div>
     </section>
 
+    <!-- LABORATORIO -->
     <section id="view-laboratorio" class="view" aria-labelledby="tab-laboratorio">
       <header class="view-header">
-        <h2>Laboratorio Interactivo de Cinemática</h2>
-        <p>Ajusta los parámetros para simular el movimiento de caída libre y caída con resistencia del aire.</p>
+        <h2>Laboratorio interactivo</h2>
+        <p>Probá las ideas con simulaciones y calculadoras.</p>
       </header>
 
       <div class="lab-grid">
-        <article class="card controls reveal lab-grid-item">
-          <h3>Controles de Simulación</h3>
-          <div class="control-group">
-              <label for="g">Gravedad (g) en la Tierra:</label>
-              <input type="number" id="g" value="9.8" min="0" step="0.1" />
-              <p class="units">m/s²</p>
+        <!-- Galileo Lab -->
+        <section class="card lab reveal">
+          <h3>Galileo: Tiro vertical / Caída libre</h3>
+          <form id="form-galileo" class="controls">
+            <label>
+              Gravedad <small>(m/s²)</small>
+              <input type="number" id="g" step="0.1" value="9.8" />
+            </label>
+            <label>
+              Velocidad inicial <small>v₀ (m/s)</small>
+              <input type="number" id="v0" step="0.1" value="12" />
+            </label>
+            <label>
+              Altura inicial <small>h₀ (m)</small>
+              <input type="number" id="h0" step="0.1" value="1.5" />
+            </label>
+            <div class="btns">
+              <button type="button" id="btn-simular" class="btn primary">Simular</button>
+              <button type="button" id="btn-reiniciar" class="btn soft">Reiniciar</button>
+            </div>
+          </form>
+          <canvas id="canvas-galileo" width="640" height="360" aria-label="Simulación de movimiento"></canvas>
+          <div class="readouts">
+            <div><strong>Tiempo de vuelo:</strong> <span id="tvuelo">—</span> s</div>
+            <div><strong>Altura máxima:</strong> <span id="hmax">—</span> m</div>
+            <div><strong>Vel. impacto:</strong> <span id="vimpacto">—</span> m/s</div>
           </div>
-          <div class="control-group">
-              <label for="h0">Altura inicial (h₀):</label>
-              <input type="number" id="h0" value="50" min="1" step="5" />
-              <p class="units">m</p>
-          </div>
-          <div class="control-group">
-              <label for="v0">Velocidad inicial (v₀):</label>
-              <input type="number" id="v0" value="0" step="1" />
-              <p class="units">m/s</p>
-          </div>
-          <div class="control-group">
-              <label for="m1">Masa 1 (Bola):</label>
-              <input type="number" id="m1" value="5" min="0.1" step="0.5" />
-              <p class="units">kg</p>
-          </div>
-          <div class="control-group">
-              <label for="m2">Masa 2 (Pluma):</label>
-              <input type="number" id="m2" value="0.1" min="0.01" step="0.05" />
-              <p class="units">kg</p>
-          </div>
-          <div class="control-group">
-              <label for="k">Coef. Resistencia (k):</label>
-              <input type="number" id="k" value="0.05" min="0" step="0.01" />
-              <p class="units">1/m</p>
+          <p class="note"></p>
+        </section>
+     
+
+        <!-- Kepler Lab -->
+        <section class="card lab reveal">
+          <h3>Kepler: 3ª ley (T² = k·a³)</h3>
+          <form class="controls" id="form-kepler">
+            <label>
+              Semieje mayor <small>a (UA)</small>
+              <input type="range" id="a" min="0.2" max="10" step="0.1" value="1" />
+              <output id="aOut">1.0</output>
+            </label>
+            <label>
+              Constante <small>k (≈1 para Sol)</small>
+              <input type="number" id="k" step="0.01" value="1.00" />
+            </label>
+          </form>
+          <div class="readouts k-readouts">
+            <div><strong>Período:</strong> <span id="T">1.00</span> años</div>
+            <div><strong>T²:</strong> <span id="T2">1.00</span></div>
+            <div><strong>a³:</strong> <span id="a3">1.00</span></div>
           </div>
 
-          <div class="btns">
-            <button type="button" id="btn-start" class="btn primary">Iniciar Simulación</button>
-            <button type="button" id="btn-reset" class="btn soft">Reiniciar</button>
-          </div>
-        </article>
-        
-        <article class="card reveal lab-grid-item">
-          <h3>Caída libre de dos masas (Vacío ideal)</h3>
-          <canvas id="canvas-caida" width="300" height="400" role="img" aria-label="Simulación de caída libre de dos masas en vacío ideal"></canvas>
-
-          <div class="lab-readouts">
-            <div class="readout-time">
-              Tiempo (t): <span id="tcaida">0.00</span> s
-            </div>
-            
-            <div class="readout-group">
-              <h5>Datos Comunes</h5>
-              <div class="data-grid">
-                <p>Aceleración: <span id="acaida">0.00</span> m/s²</p>
-              </div>
-            </div>
-            
-            <div class="readout-group">
-              <h5>Masa 1 (Bola)</h5>
-              <div class="data-grid">
-                <p>Distancia (y): <span id="ycaida1">0.00</span> m</p>
-                <p>Velocidad (v): <span id="vcaida1">0.00</span> m/s</p>
-              </div>
-            </div>
-            
-            <div class="readout-group">
-              <h5>Masa 2 (Pluma)</h5>
-              <div class="data-grid">
-                <p>Distancia (y): <span id="ycaida2">0.00</span> m</p>
-                <p>Velocidad (v): <span id="vcaida2">0.00</span> m/s</p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="card reveal lab-grid-item">
-          <h3>Caída con Resistencia del aire</h3>
-          <canvas id="canvas-aire" width="300" height="400" role="img" aria-label="Simulación de caída con resistencia del aire"></canvas>
-
-          <div class="lab-readouts">
-            <div class="readout-time">
-              Tiempo (t): <span id="taire">0.00</span> s
-            </div>
-            
-            <div class="readout-group">
-              <h5>Objeto 1 (Bola)</h5>
-              <div class="data-grid">
-                <p>Distancia (y): <span id="yaire1">0.00</span> m</p>
-                <p>Velocidad (v): <span id="vaire1">0.00</span> m/s</p>
-                <p>Aceleración (a): <span id="aaire1">0.00</span> m/s²</p>
-              </div>
-            </div>
-            
-            <div class="readout-group">
-              <h5>Objeto 2 (Pluma)</h5>
-              <div class="data-grid">
-                <p>Distancia (y): <span id="yaire2">0.00</span> m</p>
-                <p>Velocidad (v): <span id="vaire2">0.00</span> m/s</p>
-                <p>Aceleración (a): <span id="aaire2">0.00</span> m/s²</p>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <section class="card lab reveal full-width-lab" width="100%">
-          <h3>Kepler: Simulador Phet (Órbitas Reales)</h3>
-          <p>Utiliza este simulador interactivo para visualizar las tres leyes del movimiento planetario.</p>
-          <div class="iframe-wrap">
-            <iframe src="https://phet.colorado.edu/sims/html/keplers-laws/latest/keplers-laws_es.html"
-                width="100%"
-                height="500"
-                allowfullscreen>
-            </iframe>
+          <div class="orbit-wrap" aria-label="Animación de órbita">
+            <svg id="orbit" viewBox="0 0 300 300" width="300" height="300" role="img" aria-label="Órbita elíptica">
+              <defs>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <ellipse id="ellipse" cx="150" cy="150" rx="110" ry="80" class="path"></ellipse>
+              <circle cx="150" cy="150" r="8" class="sun" filter="url(#glow)"></circle>
+              <circle id="planet" r="6" class="planet"></circle>
+            </svg>
+            <p class="note">La velocidad orbital se ajusta para mantener el período estimado.</p>
           </div>
         </section>
-        
-        </div>
-    </section>
-    
-    <section id="view-examen" class="view" aria-labelledby="tab-examen">
-      <header class="view-header">
-        <h2>Examen de Galileo & Kepler</h2>
-        <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
-      </header>
+       <!-- Caída libre de dos masas -->
+<section class="card lab reveal">
+  <h3>Caída Libre (distintas masas)</h3>
+  <div class="controls">
+    <label>Masa objeto 1 (kg)
+      <input type="number" id="masa1" value="5" step="0.1">
+    </label>
+    <label>Masa objeto 2 (kg)
+      <input type="number" id="masa2" value="50" step="0.1">
+    </label>
+  </div>
+  <div class="btns">
+    <button type="button" id="btn-caida" class="btn primary">Soltar</button>
+    <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-caida" width="320" height="240"></canvas>
+  <p class="note">Ambos caen igual, independientemente de la masa.</p>
+</section>
 
-      <div id="exam-container" class="exam-container card reveal">
-        <form id="exam-form" class="controls exam-form">
-          </form>
-        <div class="btns">
-          <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
-          <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
-        </div>
-        <div id="exam-result" class="exam-result"></div>
+<!-- Resistencia del aire -->
+<section class="card lab reveal">
+  <h3>Caída con resistencia del aire</h3>
+  <div class="controls">
+    <label>Masa bola (kg)
+      <input type="number" id="masaBola" value="5" step="0.1">
+    </label>
+    <label>Masa pluma (kg)
+      <input type="number" id="masaPluma" value="0.1" step="0.01">
+    </label>
+  </div>
+  <label><input type="checkbox" id="aireToggle"> Activar resistencia</label>
+  <div class="btns">
+    <button type="button" id="btn-aire" class="btn primary">Soltar</button>
+    <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
+  </div>
+  <canvas id="canvas-aire" width="320" height="240"></canvas>
+  <p class="note">Con aire: la pluma cae más lento. Sin aire: caen igual.</p>
+</section>
+        
+        <section class="card lab reveal full-width-lab" width="100%">
+            <h3>Kepler: Simulador Phet (Órbitas Reales)</h3>
+            <p>Utiliza este simulador interactivo para visualizar las tres leyes del movimiento planetario.</p>
+            <div class="iframe-wrap">
+                <iframe src="https://phet.colorado.edu/sims/html/keplers-laws/latest/keplers-laws_es.html"
+                    width="100%"
+                    height="500"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </section>
       </div>
     </section>
+    <!-- EXAMEN -->
+<section id="view-examen" class="view" aria-labelledby="tab-examen">
+  <header class="view-header">
+    <h2>Examen de Galileo & Kepler</h2>
+    <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
+  </header>
 
+  <div id="exam-container" class="exam-container card reveal">
+    <form id="exam-form" class="controls exam-form">
+      <!-- Las preguntas se insertan dinámicamente con JS -->
+    </form>
+    <div class="btns">
+      <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
+      <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
+    </div>
+    <div id="exam-result" class="exam-result"></div>
+  </div>
+</section>
+
+    
   </main>
 
+  <!-- Modal biografías -->
   <dialog id="bio-modal" aria-labelledby="bio-title" class="bio-modal">
     <form method="dialog" class="modal-card">
       <header class="modal-head">
@@ -272,14 +287,28 @@
           </div>
       </div>
       
-      <footer class="slider-controls">
-        <button id="prev-slide" class="btn soft" disabled>← Anterior</button>
-        <div id="slide-counter">1 / 1</div>
-        <button id="next-slide" class="btn soft">Siguiente →</button>
+      <footer class="slider-nav">
+          <button type="button" id="prev-slide" disabled>← Anterior</button>
+          <div id="slide-counter"></div>
+          <button type="button" id="next-slide">Siguiente →</button>
       </footer>
-    </form>
+      </form>
   </dialog>
+
+  </main>
 
   <script src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
