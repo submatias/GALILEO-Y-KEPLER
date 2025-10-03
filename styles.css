@@ -290,6 +290,30 @@ html,body{
         display: none;
     }
 }
+/* styles.css: Añadir al final del archivo */
+
+/* Hace que el iFrame de Kepler ocupe todo el ancho en desktop (rompiendo el lab-grid de 2 columnas) */
+@media (min-width: 980px){
+  .full-width-lab {
+    grid-column: 1 / -1; /* Ocupa de la columna 1 hasta la última */
+  }
+}
+
+.iframe-wrap {
+    /* Ajustes para el contenedor del iFrame */
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow: hidden; /* Asegura que el iframe se mantenga dentro del borde redondeado */
+    background: #000;
+}
+
+.iframe-wrap iframe {
+    /* Ajustes para el iFrame */
+    display: block;
+    border: none;
+    width: 100%;
+    min-height: 400px; /* Asegura que el simulador siempre sea visible */
+}
 
 
 
