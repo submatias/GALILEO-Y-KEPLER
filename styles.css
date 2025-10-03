@@ -315,5 +315,29 @@ html,body{
     min-height: 400px; /* Asegura que el simulador siempre sea visible */
 }
 
+/* styles.css: Añadir al final del archivo */
+
+/* Estilos para el iframe de Kepler */
+@media (min-width: 980px){
+  .full-width-lab {
+    grid-column: 1 / -1; /* Ocupa de la columna 1 hasta la última en el lab-grid */
+  }
+}
+
+.iframe-wrap {
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow: hidden; 
+    background: #000;
+}
+
+.iframe-wrap iframe {
+    display: block;
+    border: none;
+    width: 100%;
+    min-height: 400px;
+}
+
+
 
 
