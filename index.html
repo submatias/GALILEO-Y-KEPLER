@@ -1,305 +1,331 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Galileo & Kepler — Biografías, Fórmulas y Laboratorio</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galileo & Kepler — Biografías, Fórmulas y Laboratorio</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="logo">
-      <span class="logo-badge">G&K</span>
-      <div class="logo-text">
-        <strong>Galileo & Kepler</strong>
-        <small>Ciencia en acción</small>
-      </div>
-    </div>
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-badge">G&K</span>
+      <div class="logo-text">
+        <strong>Galileo & Kepler</strong>
+        <small>Ciencia en acción</small>
+      </div>
+    </div>
 
-    <nav class="tabs" role="tablist" aria-label="Secciones del sitio">
-      <button class="tab active" data-route="inicio" aria-selected="true">Inicio</button>
-      <button class="tab" data-route="formulas" aria-selected="false">Fórmulas</button>
-      <button class="tab" data-route="laboratorio" aria-selected="false">Laboratorio</button>
-        <button class="tab" data-route="examen" aria-selected="false">Examen</button>
-      <div class="tab-ink"></div>
-    </nav>
-  </header>
+    <nav class="tabs" role="tablist" aria-label="Secciones del sitio">
+      <button class="tab active" data-route="inicio" aria-selected="true">Inicio</button>
+      <button class="tab" data-route="formulas" aria-selected="false">Fórmulas</button>
+      <button class="tab" data-route="laboratorio" aria-selected="false">Laboratorio</button>
+        <button class="tab" data-route="examen" aria-selected="false">Examen</button>
+      <div class="tab-ink"></div>
+    </nav>
+  </header>
 
-  <main id="app" class="app">
-    <section id="view-inicio" class="view active" aria-labelledby="tab-inicio">
-      <div class="hero">
-        <h1 class="title slide-up">Grandes mentes, grandes ideas</h1>
-        <p class="subtitle fade-in">
-          Explorá las vidas y aportes de <b>Galileo Galilei</b> y <b>Johannes Kepler</b>.
-          Hacé click en sus retratos para conocer más.
-        </p>
-      </div>
+  <main id="app" class="app">
+        <section id="view-inicio" class="view active" aria-labelledby="tab-inicio">
+      <div class="hero">
+        <h1 class="title slide-up">Grandes mentes, grandes ideas</h1>
+        <p class="subtitle fade-in">
+          Explorá las vidas y aportes de <b>Galileo Galilei</b> y <b>Johannes Kepler</b>.
+          Hacé click en sus retratos para conocer más.
+        </p>
+      </div>
 
-      <div class="grid-portraits">
-        <article class="card portrait" data-person="galileo" tabindex="0" role="button" aria-pressed="false">
-          <div class="img-wrap">
-            <img src="https://s3.amazonaws.com/rtvc-assets-senalcolombia.gov.co/s3fs-public/field/image/21-agosto-telescopio-historia-presenta-mundo-galileo-galilei-portada.jpg" alt="Retrato de Galileo Galilei" onerror="this.classList.add('fallback')" />
-            <div class="badge">Galileo Galilei</div>
-          </div>
-          <p class="hint">Click para ver biografía</p>
-        </article>
+      <div class="grid-portraits">
+        <article class="card portrait" data-person="galileo" tabindex="0" role="button" aria-pressed="false">
+          <div class="img-wrap">
+            <img src="https://s3.amazonaws.com/rtvc-assets-senalcolombia.gov.co/s3fs-public/field/image/21-agosto-telescopio-historia-presenta-mundo-galileo-galilei-portada.jpg" alt="Retrato de Galileo Galilei" onerror="this.classList.add('fallback')" />
+            <div class="badge">Galileo Galilei</div>
+          </div>
+          <p class="hint">Click para ver biografía</p>
+        </article>
 
-        <article class="card portrait" data-person="kepler" tabindex="0" role="button" aria-pressed="false">
-          <div class="img-wrap">
-            <img src="https://i.ytimg.com/vi/to10LqfcQYI/maxresdefault.jpg" alt="Retrato de Johannes Kepler" onerror="this.classList.add('fallback')" />
-            <div class="badge">Johannes Kepler</div>
-          </div>
-          <p class="hint">Click para ver biografía</p>
-        </article>
-      </div>
-      <section class="card reveal" style="margin-top: 1rem;">
-  <h3>Pregúntale a nuestra IA</h3>
-  <div class="controls" style="grid-template-columns: 1fr; gap: 0.5rem;">
-    <label>Tu pregunta:
-      <textarea id="ai-question" rows="3" placeholder="Ej: ¿Qué son las leyes de Kepler?"></textarea>
-    </label>
-    <button type="button" id="btn-ai-ask" class="btn primary">Enviar pregunta</button>
-  </div>
-  <div class="readouts" style="flex-direction: column;">
-    <h4>Respuesta de la IA:</h4>
-    <div id="ai-answer" style="white-space: pre-wrap; color: var(--text);">Proximamente...</div>
-  </div>
-</section>
-    </section>
- 
-
-    <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
-      <header class="view-header">
-        <h2>Fórmulas y aplicaciones</h2>
-        <p>Resumen de ecuaciones clave y para qué se usan.</p>
-      </header>
-
-      <div class="cards formulas">
-        <article class="card reveal">
-          <h3>Galileo — Cinemática</h3>
-          <ul class="formula-list">
-            <li>
-              <div><code>v = v₀ + a·t</code></div>
-              <small>Evolución de la velocidad con aceleración constante (caída libre: <code>a ≈ g</code>).</small>
-            </li>
-            <li>
-              <div><code>s = s₀ + v₀·t + ½·a·t²</code></div>
-              <small>Posición en MRUA; predice alturas, tiempos de vuelo, etc.</small>
-            </li>
-            <li>
-              <div><code>v² = v₀² + 2·a·(s − s₀)</code></div>
-              <small>Relación entre velocidades y desplazamiento sin tiempo.</small>
-            </li>
-          </ul>
-          <p class="use">Uso típico: analizar caídas, lanzamientos verticales y planos inclinados.</p>
-        </article>
-
-        <article class="card reveal">
-          <h3>Kepler — Leyes del movimiento planetario</h3>
-          <ol class="formula-list">
-            <li>
-              <div><strong>1ª Ley (Órbitas elípticas)</strong>: los planetas se mueven en elipses con el Sol en un foco.</div>
-            </li>
-            <li>
-              <div><strong>2ª Ley (Áreas iguales)</strong>: el radio vector barre áreas iguales en tiempos iguales.</div>
-              <small>Implica que el planeta va más rápido cerca del perihelio.</small>
-            </li>
-            <li>
-              <div><strong>3ª Ley (Períodos)</strong>:
-                <code>T² ∝ a³</code> &nbsp; (para un mismo sistema: <code>T² = k·a³</code>).
-              </div>
-              <small>Relaciona el período orbital <code>T</code> con el semieje mayor <code>a</code>.</small>
-            </li>
-          </ol>
-          <p class="use">Uso típico: estimar períodos orbitales y comparar órbitas en sistemas planetarios.</p>
-        </article>
-
-        <article class="card tip reveal">
-          <h3>Tip rápido</h3>
-          <p>En unidades astronómicas (UA) y años alrededor del Sol, <code>k ≈ 1</code>, por lo que <code>T² ≈ a³</code>.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="view-laboratorio" class="view" aria-labelledby="tab-laboratorio">
-      <header class="view-header">
-        <h2>Laboratorio interactivo</h2>
-        <p>Probá las ideas con simulaciones y calculadoras.</p>
-      </header>
-
-      <div class="lab-grid">
-        <section class="card lab reveal">
-          <h3>Galileo: Tiro vertical / Caída libre</h3>
-          <form id="form-galileo" class="controls">
-            <label>
-              Gravedad <small>(m/s²)</small>
-              <input type="number" id="g" step="0.1" value="9.8" />
-            </label>
-            <label>
-              Velocidad inicial <small>v₀ (m/s)</small>
-              <input type="number" id="v0" step="0.1" value="12" />
-            </label>
-            <label>
-              Altura inicial <small>h₀ (m)</small>
-              <input type="number" id="h0" step="0.1" value="1.5" />
-            </label>
-            <div class="btns">
-              <button type="button" id="btn-simular" class="btn primary">Simular</button>
-              <button type="button" id="btn-reiniciar" class="btn soft">Reiniciar</button>
-            </div>
-          </form>
-          <canvas id="canvas-galileo" width="640" height="360" aria-label="Simulación de movimiento"></canvas>
-          <div class="readouts">
-            <div><strong>Tiempo de vuelo:</strong> <span id="tvuelo">—</span> s</div>
-            <div><strong>Altura máxima:</strong> <span id="hmax">—</span> m</div>
-            <div><strong>Vel. impacto:</strong> <span id="vimpacto">—</span> m/s</div>
-          </div>
-          <p class="note"></p>
+        <article class="card portrait" data-person="kepler" tabindex="0" role="button" aria-pressed="false">
+          <div class="img-wrap">
+            <img src="https://i.ytimg.com/vi/to10LqfcQYI/maxresdefault.jpg" alt="Retrato de Johannes Kepler" onerror="this.classList.add('fallback')" />
+            <div class="badge">Johannes Kepler</div>
+          </div>
+          <p class="hint">Click para ver biografía</p>
+        </article>
+      </div>
+      <section class="card reveal" style="margin-top: 1rem;">
+          <h3>Pregúntale a nuestra IA</h3>
+          <div class="controls" style="grid-template-columns: 1fr; gap: 0.5rem;">
+            <label>Tu pregunta:
+                <textarea id="ai-question" rows="3" placeholder="Ej: ¿Qué son las leyes de Kepler?"></textarea>
+            </label>
+            <button type="button" id="btn-ai-ask" class="btn primary">Enviar pregunta</button>
+          </div>
+          <div class="readouts" style="flex-direction: column;">
+            <h4>Respuesta de la IA:</h4>
+            <div id="ai-answer" style="white-space: pre-wrap; color: var(--text);">Proximamente...</div>
+          </div>
         </section>
+    </section>
+ 
 
-        <section class="card lab reveal">
-          <h3>Kepler: 3ª ley (T² = k·a³)</h3>
-          <form class="controls" id="form-kepler">
-            <label>
-              Semieje mayor <small>a (UA)</small>
-              <input type="range" id="a" min="0.2" max="10" step="0.1" value="1" />
-              <output id="aOut">1.0</output>
-            </label>
-            <label>
-              Constante <small>k (≈1 para Sol)</small>
-              <input type="number" id="k" step="0.01" value="1.00" />
-            </label>
-          </form>
-          <div class="readouts k-readouts">
-            <div><strong>Periodo T:</strong> <span id="T">—</span> (años)</div>
-            <div><strong>T²:</strong> <span id="T2">—</span></div>
-            <div><strong>a³:</strong> <span id="a3">—</span></div>
-          </div>
-          <div class="orbit-wrap">
-            <svg id="orbit" viewBox="0 0 300 300" width="300" height="300">
-              <circle cx="150" cy="150" r="10" class="sun" id="sun"/>
-              <ellipse cx="150" cy="150" rx="110" ry="80" class="path" id="ellipse"/>
-              <circle cx="260" cy="150" r="8" class="planet" id="planet"/>
-            </svg>
-          </div>
-        </section>
+        <section id="view-formulas" class="view" aria-labelledby="tab-formulas">
+      <header class="view-header">
+        <h2>Fórmulas y aplicaciones</h2>
+        <p>Resumen de ecuaciones clave y para qué se usan.</p>
+      </header>
 
-        <section class="card lab reveal">
-          <h3>Caída libre de dos masas (Vacío ideal)</h3>
-          <form class="controls" id="form-caida">
-            <label>
-              Masa Objeto 1 (kg)
-              <input type="number" id="masa1" step="0.1" value="10" min="0.1" />
-            </label>
-            <label>
-              Masa Objeto 2 (kg)
-              <input type="number" id="masa2" step="0.1" value="1" min="0.1" />
-            </label>
-            <div class="btns">
-              <button type="button" id="btn-caida" class="btn primary">Simular</button>
-              <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
-            </div>
-          </form>
+      <div class="cards formulas">
+        <article class="card reveal">
+          <h3>Galileo — Cinemática</h3>
+          <ul class="formula-list">
+            <li>
+              <div><code>v = v₀ + a·t</code></div>
+              <small>Evolución de la velocidad con aceleración constante (caída libre: <code>a ≈ g</code>).</small>
+            </li>
+            <li>
+              <div><code>s = s₀ + v₀·t + ½·a·t²</code></div>
+              <small>Posición en MRUA; predice alturas, tiempos de vuelo, etc.</small>
+            </li>
+            <li>
+              <div><code>v² = v₀² + 2·a·(s − s₀)</code></div>
+              <small>Relación entre velocidades y desplazamiento sin tiempo.</small>
+            </li>
+          </ul>
+          <p class="use">Uso típico: analizar caídas, lanzamientos verticales y planos inclinados.</p>
+        </article>
 
-          <canvas id="canvas-caida" width="320" height="300" aria-label="Simulación de caída libre"></canvas>
+        <article class="card reveal">
+          <h3>Kepler — Leyes del movimiento planetario</h3>
+          <ol class="formula-list">
+            <li>
+              <div><strong>1ª Ley (Órbitas elípticas)</strong>: los planetas se mueven en elipses con el Sol en un foco.</div>
+            </li>
+            <li>
+              <div><strong>2ª Ley (Áreas iguales)</strong>: el radio vector barre áreas iguales en tiempos iguales.</div>
+              <small>Implica que el planeta va más rápido cerca del perihelio.</small>
+            </li>
+            <li>
+              <div><strong>3ª Ley (Períodos)</strong>:
+                <code>T² ∝ a³</code> &nbsp; (para un mismo sistema: <code>T² = k·a³</code>).
+              </div>
+              <small>Relaciona el período orbital <code>T</code> con el semieje mayor <code>a</code>.</small>
+            </li>
+          </ol>
+          <p class="use">Uso típico: estimar períodos orbitales y comparar órbitas en sistemas planetarios.</p>
+        </article>
 
-          <div class="readouts full-readouts">
-            <div><strong>Tiempo:</strong> <span id="tcaida">—</span> s</div>
-            <hr style="width: 100%; border-color: #ffffff1a; margin: .5rem 0;"/>
-            <div style="width: 100%; font-weight: bold; margin-bottom: 0.2rem; color: var(--ink);">Objeto 1 (Bola)</div>
-            <div><strong>Distancia:</strong> <span id="ycaida1">—</span> m</div>
-            <div><strong>Velocidad:</strong> <span id="vcaida1">—</span> m/s</div>
-            <div><strong>Aceleración:</strong> <span id="acaida1">—</span> m/s²</div>
-            <div style="width: 100%; font-weight: bold; margin-top: 0.6rem; margin-bottom: 0.2rem; color: var(--warn);">Objeto 2 (Pluma)</div>
-            <div><strong>Distancia:</strong> <span id="ycaida2">—</span> m</div>
-            <div><strong>Velocidad:</strong> <span id="vcaida2">—</span> m/s</div>
-            <div><strong>Aceleración:</strong> <span id="acaida2">—</span> m/s²</div>
-          </div>
-        </section>
+        <article class="card tip reveal">
+          <h3>Tip rápido</h3>
+          <p>En unidades astronómicas (UA) y años alrededor del Sol, <code>k ≈ 1</code>, por lo que <code>T² ≈ a³</code>.</p>
+        </article>
+      </div>
+    </section>
 
-        <section class="card lab reveal">
-          <h3>Caída con Resistencia del aire</h3>
-          <form class="controls" id="form-aire">
-            <label>
-              Masa Objeto 1 (Bola, kg)
-              <input type="number" id="masaBola" step="0.1" value="10" min="0.1" />
-            </label>
-            <label>
-              Masa Objeto 2 (Pluma, kg)
-              <input type="number" id="masaPluma" step="0.01" value="0.01" min="0.01" />
-            </label>
-            <label style="grid-column: 1 / -1;">
-              Activar Resistencia
-              <input type="checkbox" id="aireToggle" checked />
-            </label>
-            <div class="btns">
-              <button type="button" id="btn-aire" class="btn primary">Simular</button>
-              <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
-            </div>
-          </form>
+        <section id="view-laboratorio" class="view" aria-labelledby="tab-laboratorio">
+      <header class="view-header">
+        <h2>Laboratorio interactivo</h2>
+        <p>Probá las ideas con simulaciones y calculadoras.</p>
+      </header>
 
-          <canvas id="canvas-aire" width="320" height="300" aria-label="Simulación con resistencia del aire"></canvas>
+      <div class="lab-grid">
+                <section class="card lab reveal">
+          <h3>Galileo: Tiro vertical / Caída libre</h3>
+          <form id="form-galileo" class="controls">
+            <label>
+              Gravedad <small>(m/s²)</small>
+              <input type="number" id="g" step="0.1" value="9.8" />
+            </label>
+            <label>
+              Velocidad inicial <small>v₀ (m/s)</small>
+              <input type="number" id="v0" step="0.1" value="12" />
+            </label>
+            <label>
+              Altura inicial <small>h₀ (m)</small>
+              <input type="number" id="h0" step="0.1" value="1.5" />
+            </label>
+            <div class="btns">
+              <button type="button" id="btn-simular" class="btn primary">Simular</button>
+              <button type="button" id="btn-reiniciar" class="btn soft">Reiniciar</button>
+            </div>
+          </form>
+          <canvas id="canvas-galileo" width="640" height="360" aria-label="Simulación de movimiento"></canvas>
+          <div class="readouts">
+            <div><strong>Tiempo de vuelo:</strong> <span id="tvuelo">—</span> s</div>
+            <div><strong>Altura máxima:</strong> <span id="hmax">—</span> m</div>
+            <div><strong>Vel. impacto:</strong> <span id="vimpacto">—</span> m/s</div>
+          </div>
+          <p class="note"></p>
+        </section>
 
-          <div class="readouts full-readouts">
-            <div><strong>Tiempo:</strong> <span id="taire">—</span> s</div>
-            <hr style="width: 100%; border-color: #ffffff1a; margin: .5rem 0;"/>
-            <div style="width: 100%; font-weight: bold; margin-bottom: 0.2rem; color: var(--ink);">Objeto 1 (Bola)</div>
-            <div><strong>Distancia:</strong> <span id="yaire1">—</span> m</div>
-            <div><strong>Velocidad:</strong> <span id="vaire1">—</span> m/s</div>
-            <div><strong>Aceleración:</strong> <span id="aaire1">—</span> m/s²</div>
-            <div style="width: 100%; font-weight: bold; margin-top: 0.6rem; margin-bottom: 0.2rem; color: var(--warn);">Objeto 2 (Pluma)</div>
-            <div><strong>Distancia:</strong> <span id="yaire2">—</span> m</div>
-            <div><strong>Velocidad:</strong> <span id="vaire2">—</span> m/s</div>
-            <div><strong>Aceleración:</strong> <span id="aaire2">—</span> m/s²</div>
-          </div>
-        </section>
+                <section class="card lab reveal">
+          <h3>Kepler: 3ª ley (T² = k·a³)</h3>
+          <form class="controls" id="form-kepler">
+            <label>
+              Semieje mayor <small>a (UA)</small>
+              <input type="range" id="a" min="0.2" max="10" step="0.1" value="1" />
+              <output id="aOut">1.0</output>
+            </label>
+            <label>
+              Constante <small>k (≈1 para Sol)</small>
+              <input type="number" id="k" step="0.01" value="1.00" />
+            </label>
+          </form>
+          <div class="readouts k-readouts">
+            <div><strong>Periodo T:</strong> <span id="T">—</span> (años)</div>
+            <div><strong>T²:</strong> <span id="T2">—</span></div>
+            <div><strong>a³:</strong> <span id="a3">—</span></div>
+          </div>
+          <div class="orbit-wrap">
+            <svg id="orbit" viewBox="0 0 300 300" width="300" height="300">
+              <circle cx="150" cy="150" r="10" class="sun" id="sun"/>
+              <ellipse cx="150" cy="150" rx="110" ry="80" class="path" id="ellipse"/>
+              <circle cx="260" cy="150" r="8" class="planet" id="planet"/>
+            </svg>
+          </div>
+        </section>
 
-      </div>
-    </section>
-    <section id="view-examen" class="view" aria-labelledby="tab-examen">
-  <header class="view-header">
-    <h2>Examen de Galileo & Kepler</h2>
-    <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
-  </header>
+                <section class="card lab reveal">
+          <h3>Caída libre de dos masas (Vacío ideal)</h3>
+          <p class="subtitle">Masa no afecta la aceleración sin aire. Altura inicial: 20.00 m</p>
+          <form class="controls" id="form-caida">
+            <label>
+              Masa Objeto 1 (kg)
+              <input type="number" id="masa1" step="0.1" value="10" min="0.1" />
+            </label>
+            <label>
+              Masa Objeto 2 (kg)
+              <input type="number" id="masa2" step="0.1" value="1" min="0.1" />
+            </label>
+            <div class="btns">
+              <button type="button" id="btn-caida" class="btn primary">Simular</button>
+              <button type="button" id="btn-caida-reset" class="btn soft">Reiniciar</button>
+            </div>
+          </form>
 
-  <div id="exam-container" class="exam-container card reveal">
-    <form id="exam-form" class="controls exam-form">
-      </form>
-    <div class="btns">
-      <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
-      <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
-    </div>
-    <div id="exam-result" class="exam-result"></div>
-  </div>
-</section>
+          <canvas id="canvas-caida" width="320" height="300" aria-label="Simulación de caída libre"></canvas>
 
-    
-  </main>
+                    <div class="lab-readouts">
+            <div class="readout-time">
+              <strong>Tiempo:</strong> <span id="tcaida">—</span> s
+            </div>
+            
+            <div class="readout-group">
+              <h5>Masa 1:</h5>
+              <div class="data-grid">
+                <p>Distancia (y): <span id="ycaida1">—</span> m</p>
+                <p>Velocidad (v): <span id="vcaida1">—</span> m/s</p>
+                <p>Aceleración (a): <span id="acaida1">—</span> m/s²</p>
+              </div>
+            </div>
+            
+            <div class="readout-group">
+              <h5>Masa 2:</h5>
+              <div class="data-grid">
+                <p>Distancia (y): <span id="ycaida2">—</span> m</p>
+                <p>Velocidad (v): <span id="vcaida2">—</span> m/s</p>
+                <p>Aceleración (a): <span id="acaida2">—</span> m/s²</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <dialog id="bio-modal" aria-labelledby="bio-title" class="bio-modal">
-    <form method="dialog" class="modal-card">
-      <header class="modal-head">
-        <h3 id="bio-title">Título</h3>
-        <button class="icon-btn" value="cancel" aria-label="Cerrar modal">X</button>
-      </header>
+                <section class="card lab reveal">
+          <h3>Caída con Resistencia del aire</h3>
+          <p class="subtitle">Altura inicial: 20.00 m. Coeficiente de arrastre: 0.05</p>
+          <form class="controls" id="form-aire">
+            <label>
+              Masa Objeto 1 (Bola, kg)
+              <input type="number" id="masaBola" step="0.1" value="10" min="0.1" />
+            </label>
+            <label>
+              Masa Objeto 2 (Pluma, kg)
+              <input type="number" id="masaPluma" step="0.01" value="0.01" min="0.01" />
+            </label>
+            <label class="toggle-switch" style="grid-column: 1 / -1;">
+              <input type="checkbox" id="aireToggle" checked>
+              <span class="slider round"></span>
+              Activar Resistencia
+            </label>
+            <div class="btns">
+              <button type="button" id="btn-aire" class="btn primary">Simular</button>
+              <button type="button" id="btn-aire-reset" class="btn soft">Reiniciar</button>
+            </div>
+          </form>
 
-      <div id="bio-content" class="modal-body bio-content">
-        <div id="bio-slides-container" class="bio-slides-container">
-          </div>
-      </div>
-      
-      <footer class="slider-controls modal-foot">
-        <button id="prev-slide" type="button" class="btn soft" disabled>Anterior</button>
-        <span id="slide-counter">1 / 1</span>
-        <button id="next-slide" type="button" class="btn soft">Siguiente</button>
-      </footer>
-    </form>
-  </dialog>
+          <canvas id="canvas-aire" width="320" height="300" aria-label="Simulación con resistencia del aire"></canvas>
 
-  <footer class="site-footer">
-    <p>Proyecto de Tesis - 2025</p>
-  </footer>
+                    <div class="lab-readouts">
+            <div class="readout-time">
+              <strong>Tiempo:</strong> <span id="taire">—</span> s
+            </div>
+            
+            <div class="readout-group">
+              <h5>Bola:</h5>
+              <div class="data-grid">
+                <p>Distancia (y): <span id="yaire1">—</span> m</p>
+                <p>Velocidad (v): <span id="vaire1">—</span> m/s</p>
+                <p>Aceleración (a): <span id="aaire1">—</span> m/s²</p>
+              </div>
+            </div>
+            
+            <div class="readout-group">
+              <h5>Pluma:</h5>
+              <div class="data-grid">
+                <p>Distancia (y): <span id="yaire2">—</span> m</p>
+                <p>Velocidad (v): <span id="vaire2">—</span> m/s</p>
+                <p>Aceleración (a): <span id="aaire2">—</span> m/s²</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <script src="app.js"></script>
+      </div>
+    </section>
+    
+        <section id="view-examen" class="view" aria-labelledby="tab-examen">
+      <header class="view-header">
+        <h2>Examen de Galileo & Kepler</h2>
+        <p>Responde las 10 preguntas seleccionadas al azar de un banco de 20. Al final tendrás tu puntaje.</p>
+      </header>
+
+      <div id="exam-container" class="exam-container card reveal">
+        <form id="exam-form" class="controls exam-form">
+          </form>
+        <div class="btns">
+          <button type="button" id="btn-exam-submit" class="btn primary">Finalizar Examen</button>
+          <button type="button" id="btn-exam-reset" class="btn soft">Reiniciar</button>
+        </div>
+        <div id="exam-result" class="exam-result"></div>
+      </div>
+    </section>
+
+    
+  </main>
+
+    <dialog id="bio-modal" aria-labelledby="bio-title" class="bio-modal">
+    <form method="dialog" class="modal-card">
+      <header class="modal-head">
+        <h3 id="bio-title">Título</h3>
+        <button class="icon-btn" value="cancel" aria-label="Cerrar modal">X</button>
+      </header>
+
+      <div id="bio-content" class="modal-body bio-content">
+        <div id="bio-slides-container" class="bio-slides-container">
+          </div>
+      </div>
+      
+      <footer class="slider-controls modal-foot">
+        <button id="prev-slide" type="button" class="btn soft" disabled>Anterior</button>
+        <span id="slide-counter">1 / 1</span>
+        <button id="next-slide" type="button" class="btn soft">Siguiente</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <footer class="site-footer">
+    <p>Proyecto de Tesis - 2025</p>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
