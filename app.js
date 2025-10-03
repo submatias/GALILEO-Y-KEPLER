@@ -19,6 +19,11 @@ function activate(route){
   });
   moveInk();
   window.location.hash = route;
+  
+  // *** CORRECCIÓN: Llamar a la animación del texto al activar la pestaña de Inicio ***
+  if (route === 'inicio') {
+      animateHeroText();
+  }
 }
 
 function moveInk(){
@@ -38,13 +43,24 @@ window.addEventListener('hashchange', () => {
 });
 activate((location.hash || '#inicio').replace('#',''));
 
-// -------- Animaciones on-scroll --------
+// -------- Animaciones on-scroll (para elementos .reveal) --------
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
   });
 },{ threshold:.12 });
 document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+// -------- Animación inicial del texto principal (Slider) --------
+function animateHeroText() {
+    // Activa la animación del título (slide-up)
+    document.querySelector('.title.slide-up')?.classList.add('in');
+    
+    // Con un pequeño retraso, activa la animación del subtítulo (fade-in)
+    setTimeout(() => {
+        document.querySelector('.subtitle.fade-in')?.classList.add('in');
+    }, 200); 
+}
 
 // -------- Biografías (modal) --------
 const bios = {
@@ -85,7 +101,7 @@ document.querySelectorAll('.portrait').forEach(card=>{
 const $ = (id)=> document.getElementById(id);
 const gInput = $('g'), v0Input = $('v0'), h0Input = $('h0');
 const canvas = $('canvas-galileo');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d') : null; 
 let animId = null, t = 0, dragging = false, dragBias = 0;
 
 function phys(t, g, v0, h0){
@@ -95,101 +111,102 @@ function phys(t, g, v0, h0){
   return { y, v };
 }
 
-function simular(){
-  cancelAnimationFrame(animId);
-  t = 0; dragBias = 0;
-  const g = Math.max(0, parseFloat(gInput.value) || 9.8);
-  const v0 = parseFloat(v0Input.value) || 0;
-  const h0 = parseFloat(h0Input.value) || 0;
+if (canvas) { 
+  function simular(){
+    cancelAnimationFrame(animId);
+    t = 0; dragBias = 0;
+    const g = Math.max(0, parseFloat(gInput.value) || 9.8);
+    const v0 = parseFloat(v0Input.value) || 0;
+    const h0 = parseFloat(h0Input.value) || 0;
 
-  // tiempos clave
-  const tSube = v0 / g; // tiempo a altura máxima (si v0>0)
-  const hMax = h0 + v0*tSube - 0.5*g*tSube*tSube;
-  // resolver tiempo de vuelo desde y=0 (suelo) => 0 = h0 + v0 t - 1/2 g t^2
-  const disc = (v0*v0) + 2*g*h0; // por cambio de signo
-  const tVuelo = (v0 + Math.sqrt(disc))/g; // raíz positiva
+    // tiempos clave
+    const tSube = v0 / g; 
+    const hMax = h0 + v0*tSube - 0.5*g*tSube*tSube;
+    const disc = (v0*v0) + 2*g*h0; 
+    const tVuelo = (v0 + Math.sqrt(disc))/g; 
 
-  // mostrar lecturas
-  $('tvuelo').textContent = (tVuelo || 0).toFixed(2);
-  $('hmax').textContent = (hMax || 0).toFixed(2);
-  const vImpacto = Math.sqrt(Math.max(0, v0*v0 + 2*g*Math.max(0, hMax))); // aprox
-  $('vimpacto').textContent = vImpacto.toFixed(2);
+    // mostrar lecturas
+    $('tvuelo').textContent = (tVuelo || 0).toFixed(2);
+    $('hmax').textContent = (hMax || 0).toFixed(2);
+    const vImpacto = Math.sqrt(Math.max(0, v0*v0 + 2*g*Math.max(0, hMax))); 
+    $('vimpacto').textContent = vImpacto.toFixed(2);
 
-  const pxPerM = canvas.height / Math.max(1, Math.max(hMax, h0) + 2); // margen
-  const groundY = canvas.height - 10;
+    const pxPerM = canvas.height / Math.max(1, Math.max(hMax, h0) + 2); 
+    const groundY = canvas.height - 10;
 
-  function draw(){
-    t += 1/60; // 60 FPS
-    const { y, v } = phys(t, g, v0, h0);
-    // mapping: y metros -> pantalla
-    const yPx = groundY - (y * pxPerM) - dragBias;
+    function draw(){
+      t += 1/60; 
+      const { y, v } = phys(t, g, v0, h0);
+      const yPx = groundY - (y * pxPerM) - dragBias;
 
-    // clear
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+      // clear
+      ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // ground
-    ctx.strokeStyle = 'rgba(255,255,255,.25)';
-    ctx.beginPath();
-    ctx.moveTo(0, groundY+0.5);
-    ctx.lineTo(canvas.width, groundY+0.5);
-    ctx.stroke();
+      // ground
+      ctx.strokeStyle = 'rgba(255,255,255,.25)';
+      ctx.beginPath();
+      ctx.moveTo(0, groundY+0.5);
+      ctx.lineTo(canvas.width, groundY+0.5);
+      ctx.stroke();
 
-    // trajectory trail
-    ctx.beginPath();
-    ctx.moveTo(40, groundY - (h0*pxPerM) - dragBias);
-    const steps = Math.floor(Math.max(t, tVuelo)*60);
-    for(let i=0;i<steps;i++){
-      const tt = i/60;
-      const { y: yy } = phys(tt, g, v0, h0);
-      const yypx = groundY - (yy * pxPerM) - dragBias;
-      const xx = 40 + tt* (canvas.width - 100)/Math.max(tVuelo, 1);
-      ctx.lineTo(xx, yypx);
+      // trajectory trail
+      ctx.beginPath();
+      ctx.moveTo(40, groundY - (h0*pxPerM) - dragBias);
+      const steps = Math.floor(Math.max(t, tVuelo)*60);
+      for(let i=0;i<steps;i++){
+        const tt = i/60;
+        const { y: yy } = phys(tt, g, v0, h0);
+        const yypx = groundY - (yy * pxPerM) - dragBias;
+        const xx = 40 + tt* (canvas.width - 100)/Math.max(tVuelo, 1);
+        ctx.lineTo(xx, yypx);
+      }
+      ctx.strokeStyle = 'rgba(124,137,255,.9)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // projectile
+      const x = 40 + t * (canvas.width - 100)/Math.max(tVuelo, 1);
+      ctx.beginPath();
+      ctx.arc(x, yPx, 8, 0, Math.PI*2);
+      ctx.fillStyle = '#5be4a8';
+      ctx.fill();
+
+      // labels
+      ctx.fillStyle = 'rgba(255,255,255,.7)';
+      ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto';
+      ctx.fillText(`t = ${t.toFixed(2)} s`, 20, 24);
+      ctx.fillText(`y = ${Math.max(0,y).toFixed(2)} m`, 20, 44);
+
+      // Update current readouts
+      $('tcurrent').textContent = t.toFixed(2);
+      $('vcurrent').textContent = Math.abs(v).toFixed(2);
+      $('ycurrent').textContent = Math.max(0,y).toFixed(2);
+
+
+      if(t < tVuelo && y >= 0){
+        animId = requestAnimationFrame(draw);
+      }
     }
-    ctx.strokeStyle = 'rgba(124,137,255,.9)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // projectile
-    const x = 40 + t * (canvas.width - 100)/Math.max(tVuelo, 1);
-    ctx.beginPath();
-    ctx.arc(x, yPx, 8, 0, Math.PI*2);
-    ctx.fillStyle = '#5be4a8';
-    ctx.fill();
-
-    // labels
-    ctx.fillStyle = 'rgba(255,255,255,.7)';
-    ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto';
-    ctx.fillText(`t = ${t.toFixed(2)} s`, 20, 24);
-    ctx.fillText(`y = ${Math.max(0,y).toFixed(2)} m`, 20, 44);
-
-    // Update current readouts
-    $('tcurrent').textContent = t.toFixed(2);
-    $('vcurrent').textContent = Math.abs(v).toFixed(2);
-    $('ycurrent').textContent = Math.max(0,y).toFixed(2);
-
-
-    if(t < tVuelo && y >= 0){
-      animId = requestAnimationFrame(draw);
-    }
+    draw();
   }
-  draw();
+
+  $('btn-simular').addEventListener('click', simular);
+  $('btn-reiniciar').addEventListener('click', ()=>{
+    cancelAnimationFrame(animId);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    $('tvuelo').textContent = $('hmax').textContent = $('vimpacto').textContent = '—';
+    // Reset current readouts
+    $('tcurrent').textContent = $('vcurrent').textContent = $('ycurrent').textContent = '0.00';
+    t = 0; dragBias = 0;
+  });
+  canvas.addEventListener('mousemove', (e)=>{
+    if(!dragging) return;
+    dragBias += (e.movementY || 0) * 0.6; 
+  });
+  canvas.addEventListener('mousedown', ()=> dragging = true);
+  window.addEventListener('mouseup', ()=> dragging = false);
 }
 
-$('btn-simular').addEventListener('click', simular);
-$('btn-reiniciar').addEventListener('click', ()=>{
-  cancelAnimationFrame(animId);
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  $('tvuelo').textContent = $('hmax').textContent = $('vimpacto').textContent = '—';
-  // Reset current readouts
-  $('tcurrent').textContent = $('vcurrent').textContent = $('ycurrent').textContent = '0.00';
-  t = 0; dragBias = 0;
-});
-canvas.addEventListener('mousemove', (e)=>{
-  if(!dragging) return;
-  dragBias += (e.movementY || 0) * 0.6; // mini “empujón”
-});
-canvas.addEventListener('mousedown', ()=> dragging = true);
-window.addEventListener('mouseup', ()=> dragging = false);
 
 // -------- LAB: Kepler (T² = k·a³) + órbita SVG --------
 const aRange = $('a'), aOut = $('aOut'), kInput = $('k');
@@ -197,71 +214,70 @@ const outT = $('T'), outT2 = $('T2'), outA3 = $('a3');
 const planet = document.getElementById('planet');
 const ellipse = document.getElementById('ellipse');
 
-function updateKeplerUI(){
-  const a = parseFloat(aRange.value);
-  const k = parseFloat(kInput.value);
-  aOut.textContent = a.toFixed(1);
+// Bloque de seguridad CRÍTICO para Kepler
+if (aRange && planet && ellipse) {
+  function updateKeplerUI(){
+    const a = parseFloat(aRange.value);
+    const k = parseFloat(kInput.value);
+    aOut.textContent = a.toFixed(1);
 
-  const T2 = k * Math.pow(a, 3);
-  const T = Math.sqrt(T2);
+    const T2 = k * Math.pow(a, 3);
+    const T = Math.sqrt(T2);
 
-  outT.textContent = T.toFixed(2);
-  outT2.textContent = T2.toFixed(2);
-  outA3.textContent = Math.pow(a,3).toFixed(2);
+    outT.textContent = T.toFixed(2);
+    outT2.textContent = T2.toFixed(2);
+    outA3.textContent = Math.pow(a,3).toFixed(2);
 
-  // Ajustar velocidad de animación: más a => mayor T => animación más lenta.
-  // Usamos CSS variable via style: duration en segundos proporcional a T.
-  const duration = Math.max(2, T * 2); // escala visual
-  planet.style.animationDuration = `${duration}s`;
+    const duration = Math.max(2, T * 2); 
+    planet.style.animationDuration = `${duration}s`;
 
-  // Escalar elipse suave en x/y para sugerir cambio de a
-  const rx0 = 110, ry0 = 80;
-  ellipse.setAttribute('rx', (rx0 * Math.cbrt(a/1)).toFixed(1));
-  ellipse.setAttribute('ry', (ry0 * Math.cbrt(a/1) * 0.9).toFixed(1));
+    const rx0 = 110, ry0 = 80;
+    ellipse.setAttribute('rx', (rx0 * Math.cbrt(a/1)).toFixed(1));
+    ellipse.setAttribute('ry', (ry0 * Math.cbrt(a/1) * 0.9).toFixed(1));
+  }
+
+  let theta = 0;
+  function animateOrbit(){
+    const rx = parseFloat(ellipse.getAttribute('rx'));
+    const ry = parseFloat(ellipse.getAttribute('ry'));
+    const cx = 150, cy = 150;
+    const dur = parseFloat(getComputedStyle(planet).animationDuration) || 4;
+    theta += (2*Math.PI) / (60*dur);
+    const x = cx + rx * Math.cos(theta);
+    const y = cy + ry * Math.sin(theta);
+    planet.setAttribute('cx', x.toFixed(2));
+    planet.setAttribute('cy', y.toFixed(2));
+    requestAnimationFrame(animateOrbit);
+  }
+  
+  aRange.addEventListener('input', updateKeplerUI);
+  kInput.addEventListener('input', updateKeplerUI);
+
+  planet.style.animationDuration = '4s';
+  updateKeplerUI();
+  animateOrbit();
 }
-aRange.addEventListener('input', updateKeplerUI);
-kInput.addEventListener('input', updateKeplerUI);
 
-// animación del planeta alrededor de la elipse (aproximación paramétrica)
-let theta = 0;
-function animateOrbit(){
-  const rx = parseFloat(ellipse.getAttribute('rx'));
-  const ry = parseFloat(ellipse.getAttribute('ry'));
-  const cx = 150, cy = 150;
-  // velocidad angular básica; el factor depende de duración CSS
-  const dur = parseFloat(getComputedStyle(planet).animationDuration) || 4;
-  theta += (2*Math.PI) / (60*dur);
-  const x = cx + rx * Math.cos(theta);
-  const y = cy + ry * Math.sin(theta);
-  planet.setAttribute('cx', x.toFixed(2));
-  planet.setAttribute('cy', y.toFixed(2));
-  requestAnimationFrame(animateOrbit);
-}
-// CSS fallback (define duración inicial)
-planet.style.animationDuration = '4s';
-updateKeplerUI();
-animateOrbit();
 
 // -------- CONSTANTES DE FÍSICA Y CANVAS PARA CAÍDA LIBRE --------
-const G_CONST = 9.8; // Gravedad (m/s²)
-const H0_SIM = 10; // Altura inicial de simulación (metros)
-const PX_PER_M = 20; // 20 píxeles por metro (200px máx. para 10m)
-const GROUND_Y = 220; // Posición Y en Canvas para el suelo
-const DRAG_COEFF = 0.05; // Coeficiente de arrastre básico para Resistencia del aire
-const DT = 1/60; // Paso de tiempo (frames por segundo)
+const G_CONST = 9.8; 
+const H0_SIM = 10; 
+const PX_PER_M = 20; 
+const GROUND_Y = 220; 
+const DRAG_COEFF = 0.05; 
+const DT = 1/60; 
 
 // -------- LAB extra: Caída libre de dos masas --------
 const caidaCanvas = $("canvas-caida");
 if (caidaCanvas) {
   const ctxCaida = caidaCanvas.getContext("2d");
   let caidaAnim;
-  let tCaida = 0; // Rastreador de tiempo para este lab
+  let tCaida = 0; 
 
   function simularCaida() {
     cancelAnimationFrame(caidaAnim);
-    tCaida = 0; // Reiniciar tiempo
+    tCaida = 0; 
 
-    // Estado inicial de la física (metros y m/s)
     let ySim1 = H0_SIM; 
     let ySim2 = H0_SIM;
     let vSim1 = 0;
@@ -271,20 +287,16 @@ if (caidaCanvas) {
     const m2 = parseFloat($("masa2").value) || 1;
     
     function draw() {
-      tCaida += DT; // Incrementar tiempo
+      tCaida += DT; 
       
-      // Física de Caída Libre (MRUA sin arrastre)
-      // y = H0 - 0.5*g*t^2; v = g*t
       const ySim_new = Math.max(0, H0_SIM - 0.5 * G_CONST * tCaida * tCaida);
-      const vSim_new = G_CONST * tCaida; // Sólo magnitud de la velocidad final
+      const vSim_new = G_CONST * tCaida; 
 
-      // Ambos objetos caen igual:
       ySim1 = ySim_new;
       ySim2 = ySim_new;
       vSim1 = vSim_new;
       vSim2 = vSim_new;
       
-      // Mapeo a Canvas (Y_canvas = GROUND_Y - Y_sim * PX_PER_M)
       const yPx1 = GROUND_Y - ySim1 * PX_PER_M;
       const yPx2 = GROUND_Y - ySim2 * PX_PER_M;
       
@@ -341,18 +353,14 @@ if (aireCanvas) {
   function updatePhysics(y, v, m, drag) {
       if (y <= 0) return { y: 0, v: 0 };
       
-      let a = G_CONST; // Aceleración de la gravedad
+      let a = G_CONST; 
       
       if (drag) {
-          // Modelo simple de arrastre: F_drag = (k/m) * v^2
           const resistanceFactor = DRAG_COEFF * v * v / m;
-          // La aceleración neta se reduce: a_neta = g - a_arrastre
           a = G_CONST - resistanceFactor; 
       }
       
-      // Integración de Euler (un paso de la simulación):
       const vNew = v + a * DT;
-      // Posición: y_new = y_old - v * dt (resta porque el eje Y apunta hacia abajo en canvas)
       const yNew = y - vNew * DT; 
       
       return { 
@@ -365,7 +373,6 @@ if (aireCanvas) {
     cancelAnimationFrame(aireAnim);
     tAire = 0;
 
-    // Estado inicial (metros y m/s)
     let ySim1 = H0_SIM;
     let ySim2 = H0_SIM;
     let vSim1 = 0;
@@ -378,17 +385,14 @@ if (aireCanvas) {
     function draw() {
       tAire += DT;
 
-      // Actualizar Objeto 1 (Bola)
       const { y: yNew1, v: vNew1 } = updatePhysics(ySim1, vSim1, mBola, conAire);
       ySim1 = yNew1;
       vSim1 = vNew1;
 
-      // Actualizar Objeto 2 (Pluma)
       const { y: yNew2, v: vNew2 } = updatePhysics(ySim2, vSim2, mPluma, conAire);
       ySim2 = yNew2;
       vSim2 = vNew2;
       
-      // Mapeo a Canvas
       const yPx1 = GROUND_Y - ySim1 * PX_PER_M;
       const yPx2 = GROUND_Y - ySim2 * PX_PER_M;
 
@@ -496,15 +500,17 @@ if (grafCanvas) {
 }
 
 // -------- UX niceties --------
-function initInkOnce(){ moveInk(); }
-window.addEventListener('load', initInkOnce);
+function initInkOnce(){ moveInk(); animateHeroText(); } // *** MODIFICADO AQUI ***
+window.addEventListener('load', initInkOnce); // *** MODIFICADO AQUI ***
 window.addEventListener('resize', ()=> {
-  // recalcular para retratos al cambiar layout
   moveInk();
 });
 
 // -------- Accesibilidad: cerrar modal con ESC --------
-modal.addEventListener('cancel', (e)=> { e.preventDefault(); modal.close(); });
+if(modal) { 
+  modal.addEventListener('cancel', (e)=> { e.preventDefault(); modal.close(); });
+}
+
 
 // -------- EXAMEN --------
 const examQuestions = [
@@ -536,7 +542,6 @@ function initExam(){
   form.innerHTML = "";
   resultBox.textContent = "";
 
-  // Selección aleatoria de 10
   const pool = [...examQuestions];
   const chosen = [];
   while(chosen.length<10){
@@ -567,48 +572,47 @@ function initExam(){
   document.getElementById('btn-exam-reset').onclick = initExam;
 }
 
-// iniciar examen al entrar a la pestaña
 document.querySelector('[data-route="examen"]').addEventListener('click', initExam);
 
 // -------- Integración de IA con Gemini --------
-// 1. Añade los elementos HTML al DOM para que el código funcione
 const aiQuestionInput = document.getElementById('ai-question');
 const aiAnswerDiv = document.getElementById('ai-answer');
 const btnAiAsk = document.getElementById('btn-ai-ask');
 
-// 2. Escucha el clic en el botón
-btnAiAsk.addEventListener('click', async () => {
-  const question = aiQuestionInput.value.trim();
-  if (!question) {
-    aiAnswerDiv.textContent = 'Por favor, escribe una pregunta.';
-    return;
-  }
-
-  aiAnswerDiv.textContent = 'Generando respuesta... ⏳';
-  btnAiAsk.disabled = true;
-
-  try {
-    const serverlessUrl = window.location.origin + '/api/ask';
-
-    const response = await fetch(serverlessUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: question }),
-    });
-
-    if (!response.ok) {
-      throw new Error('La IA no pudo responder. Inténtalo de nuevo más tarde.');
+if(btnAiAsk) { 
+    btnAiAsk.addEventListener('click', async () => {
+    const question = aiQuestionInput.value.trim();
+    if (!question) {
+        aiAnswerDiv.textContent = 'Por favor, escribe una pregunta.';
+        return;
     }
 
-    const data = await response.json();
-    aiAnswerDiv.textContent = data.answer || 'No se pudo obtener una respuesta.';
+    aiAnswerDiv.textContent = 'Generando respuesta... ⏳';
+    btnAiAsk.disabled = true;
 
-  } catch (error) {
-    console.error('Error al comunicarse con la IA:', error);
-    aiAnswerDiv.textContent = 'Hubo un error al procesar tu pregunta. Por favor, revisa la consola para más detalles.';
-  } finally {
-    btnAiAsk.disabled = false;
-  }
-});
+    try {
+        const serverlessUrl = window.location.origin + '/api/ask';
+
+        const response = await fetch(serverlessUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: question }),
+        });
+
+        if (!response.ok) {
+        throw new Error('La IA no pudo responder. Inténtalo de nuevo más tarde.');
+        }
+
+        const data = await response.json();
+        aiAnswerDiv.textContent = data.answer || 'No se pudo obtener una respuesta.';
+
+    } catch (error) {
+        console.error('Error al comunicarse con la IA:', error);
+        aiAnswerDiv.textContent = 'Hubo un error al procesar tu pregunta. Por favor, revisa la consola para más detalles.';
+    } finally {
+        btnAiAsk.disabled = false;
+    }
+    });
+}
