@@ -314,37 +314,9 @@ html,body{
     width: 100%;
     min-height: 400px; /* Asegura que el simulador siempre sea visible */
 }
-/* --- ESTILOS PARA LOS NUEVOS READOUTS SIMÉTRICOS --- */
 
-/* Contenedor general de las lecturas de laboratorio */
-.lab-readouts {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed #ffffff1a;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
 
-/* Estilo para el tiempo (siempre arriba) */
-.readout-time {
-    text-align: center;
-    font-size: 1.1rem;
-    color: var(--ok); /* Hace que el tiempo destaque */
-}
 
-/* Grupo de lecturas (Masa 1, Masa 2, Bola, Pluma) */
-.readout-group {
-    padding: 0.5rem;
-    border: 1px solid var(--card);
-    border-radius: var(--radius);
-    background: #191d3f33; /* Fondo más suave */
-}
-
-.readout-group h5 {
-    margin: 0 0 0.5rem 0;
-    color: var(--ink); /* Color para los títulos de grupo */
-}
 /* --- ESTILOS PARA LOS NUEVOS READOUTS SIMÉTRICOS (lab-readouts y data-grid) --- */
 
 /* Contenedor general de las lecturas de laboratorio */
@@ -410,10 +382,3 @@ html,body{
         grid-template-columns: repeat(2, 1fr);
     }
 }
-
-
-
-
-
-
-
