@@ -346,35 +346,8 @@ html,body{
     color: var(--ink); /* Color para los títulos de grupo */
 }
 
-/* El truco de la simetría: Usar CSS Grid */
-.data-grid {
-    display: grid;
-    /* Divide el espacio en tres columnas de igual ancho */
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 0.8rem;
-    align-items: flex-start;
-}
 
-.data-grid p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.2;
-}
 
-.data-grid span {
-    color: var(--text);
-    font-weight: bold;
-    display: block; /* Asegura que el número esté en su propia línea */
-}
-
-/* Ajustes para pantallas pequeñas */
-@media (max-width: 600px) {
-    .data-grid {
-        /* En pantallas muy pequeñas, podemos usar dos columnas para que no se vea tan apretado */
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 
 
